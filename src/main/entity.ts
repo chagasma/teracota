@@ -7,7 +7,7 @@ import type { WaifuEvent } from '../shared/protocol';
 import { Walker } from './walker';
 
 export const SIZE = { width: 320, height: 440 };
-const CURSOR_POLL_MS = 50;
+const CURSOR_POLL_MS = 33;
 const LEAVE_MS = 2500;
 
 export interface EntityOptions {
@@ -75,8 +75,12 @@ export class Entity {
     this.win.setIgnoreMouseEvents(true, { forward: true });
     this.win.loadFile(path.join(__dirname, 'renderer', 'index.html'));
     this.win.once('ready-to-show', () => { if (opts.visible !== false) this.win.showInactive(); });
+    let last = '';
     this.win.webContents.on('did-finish-load', () => {
       this.ready = true;
+      // página nova (ou recarregada) começa deixando o clique passar, e recebe o cursor de novo
+      this.win.setIgnoreMouseEvents(true, { forward: true });
+      last = '';
       this.win.webContents.send(IPC.mode, { mode: this.moveMode, announce: false });
       this.win.webContents.send(IPC.identity, this.identity);
       for (const [channel, payload] of this.queue.splice(0)) this.win.webContents.send(channel, payload);
@@ -87,8 +91,9 @@ export class Entity {
       onStop: () => this.settle(),
     });
 
-    // Posição do cursor pro personagem acompanhar com os olhos
-    let last = '';
+    // Posição do cursor relativa à janela. O renderer usa pra saber se o mouse está em
+    // cima do personagem (os eventos repassados pelo setIgnoreMouseEvents não são
+    // confiáveis no Windows, principalmente com monitores de escalas diferentes) e pros olhos.
     const poll = setInterval(() => {
       if (!this.alive) return;
       const p = screen.getCursorScreenPoint();

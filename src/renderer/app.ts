@@ -193,15 +193,32 @@ function setHovering(over: boolean): void {
   updateWalkAllowed();
 }
 
+/**
+ * Posição do cursor vinda do main (a cada ~33ms). É a fonte de verdade do "mouse em
+ * cima dela": não depende dos eventos repassados pelo setIgnoreMouseEvents, que no
+ * Windows às vezes param de chegar e deixavam a Tera impossível de clicar.
+ */
+function onCursor(p: Point): void {
+  if (!pressed) setHovering(character.hitTest(p.x, p.y));
+  if (!walking && !dragging) character.lookAt(p);
+}
+
+/** Encerra um clique/arrasto (inclusive quando o "soltar" se perdeu fora da janela) */
+function release(clicked: boolean): void {
+  if (!pressed) return;
+  pressed = null;
+  if (dragging) endDrag();
+  else if (clicked) onClick();
+}
+
 function bindMouse(): void {
-  // O main repassa o mousemove mesmo com a janela ignorando cliques: dá pra testar
-  // pixel a pixel se o cursor está em cima do personagem (e não do fundo transparente).
   window.addEventListener('mousemove', (e) => {
     if (!pressed) {
-      setHovering(character.hitTest(e.clientX, e.clientY));
       if (hovering) petting.track(e.screenX);
       return;
     }
+    // botão já solto e o mouseup não chegou (arrasto rápido escapou da janela)
+    if (e.buttons === 0) return release(false);
     const dx = e.screenX - pressed.x;
     const dy = e.screenY - pressed.y;
     pressed = { x: e.screenX, y: e.screenY, moved: pressed.moved + Math.abs(dx) + Math.abs(dy) };
@@ -212,24 +229,30 @@ function bindMouse(): void {
     }
   });
 
-  document.addEventListener('mouseleave', () => { if (!pressed) setHovering(false); });
-
+  // Cliques de verdade só chegam quando a janela não está ignorando o mouse; as
+  // coordenadas deles são confiáveis, então o teste de pixel decide na hora.
   window.addEventListener('mousedown', (e) => {
-    if (e.button === 0 && hovering) pressed = { x: e.screenX, y: e.screenY, moved: 0 };
+    if (e.button !== 0 || !character.hitTest(e.clientX, e.clientY)) return;
+    pressed = { x: e.screenX, y: e.screenY, moved: 0 };
+    setHovering(true);
   });
 
   window.addEventListener('mouseup', (e) => {
-    if (!pressed) return;
-    pressed = null;
-    if (dragging) endDrag();
-    else onClick();
-    setHovering(character.hitTest(e.clientX, e.clientY));
+    if (e.button === 0) release(true);
   });
+
+  // perdeu o foco no meio do arrasto (Alt+Tab, outra janela por cima)
+  window.addEventListener('blur', () => release(false));
 
   window.addEventListener('contextmenu', (e) => {
     e.preventDefault();
-    if (hovering) api?.openContextMenu();
+    if (character.hitTest(e.clientX, e.clientY)) api?.openContextMenu();
   });
+
+  // Reafirma o estado de tempos em tempos: se main e renderer divergirem por
+  // qualquer motivo (recarregar, janela escondida/mostrada), se corrige sozinho.
+  api?.setIgnoreMouse(true);
+  window.setInterval(() => api?.setIgnoreMouse(!hovering && !pressed), 1000);
 }
 
 // ---------- inicialização ----------
@@ -263,7 +286,7 @@ if (api) {
   api.onMode(whenReady(onMode));
   api.onIdentity(whenReady(onIdentity));
   api.onLeave(whenReady(onLeave));
-  api.onCursor((p) => { if (ready && !walking && !dragging) character.lookAt(p); });
+  api.onCursor((p) => { if (ready) onCursor(p); });
 }
 
 async function init(): Promise<void> {
@@ -275,7 +298,7 @@ async function init(): Promise<void> {
   if (!api) {
     // Aberto no navegador, sem Electron: expõe handlers pra testar pelo console
     Object.assign(window, { handleEvent, onWalk, onIdentity, onLeave });
-    document.addEventListener('mousemove', (e) => character.lookAt({ x: e.clientX, y: e.clientY }));
+    document.addEventListener('mousemove', (e) => onCursor({ x: e.clientX, y: e.clientY }));
   }
 }
 
