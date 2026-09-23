@@ -1,0 +1,12 @@
+{
+  "name": "terracota",
+  "owner": { "name": "Thallys Morais" },
+  "metadata": { "description": "Tera — personagem de desktop pro Claude Code" },
+  "plugins": [
+    {
+      "name": "terracota",
+      "source": "./plugin",
+      "description": "Conecta o Claude Code à Tera, a personagem de desktop do app Terracota."
+    }
+  ]
+}

@@ -5,6 +5,7 @@ import { app, nativeImage } from 'electron';
 import fs from 'node:fs';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
+import { assetsDir } from './paths';
 import {
   HIT_MASK_SIZE, SVG_SKIN_ID, parseSkinManifest,
   type Pose, type SkinAnimation, type SkinInfo, type SkinManifest,
@@ -16,7 +17,7 @@ export interface SkinEntry {
 }
 
 function skinRoots(): string[] {
-  return [path.join(app.getAppPath(), 'assets', 'skins'), path.join(app.getPath('userData'), 'skins')];
+  return [path.join(assetsDir(), 'skins'), path.join(app.getPath('userData'), 'skins')];
 }
 
 function findSkinDir(id: string): string | null {

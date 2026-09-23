@@ -1,115 +1,118 @@
-# waifu-claude
+# Terracota
 
-Personagem de desktop que reage ao que o Claude Code está fazendo, passeia pela
-tela e interage com você — uma só pra todas as sessões, ou uma por sessão.
+**Tera** é uma gatinha que mora no seu desktop e acompanha o seu trabalho no
+[Claude Code](https://claude.com/claude-code): senta no notebook quando o Claude
+está editando, fica confusa quando dá erro, acena quando ele precisa de você,
+comemora quando termina — e passeia pela tela quando está tudo calmo.
 
-```
-Claude Code ──hooks (curl)──► POST /hook ──┐
-     │                                      ▼
-     └──MCP (HTTP)──────────► POST /mcp ──► app Electron (127.0.0.1:7777)
-                                            uma janela transparente por waifu
-```
+> Projeto independente, não é afiliado à Anthropic.
 
-Não precisa de Node pra integração: os hooks são uma linha de `curl` (já vem no
-Windows 10+, macOS e Linux) e o MCP é servido pelo próprio app.
+## Instalar
 
-## Rodar
+1. Baixe o instalador (`Terracota Setup x.y.z.exe`) na página de
+   [Releases](https://github.com/OWNER/terracota/releases) e rode.
+   O Windows pode mostrar o aviso do SmartScreen (o app ainda não é assinado):
+   **Mais informações → Executar assim mesmo**.
+2. Conecte ao Claude Code — no Claude Code, rode:
+   ```
+   /plugin marketplace add OWNER/terracota
+   /plugin install terracota@terracota
+   ```
+   (ou clique com o botão direito na Tera → **Conectar ao Claude Code**, que copia esses comandos.)
+3. Pronto. Abra uma sessão do Claude Code e a Tera começa a reagir.
+
+Com o app fechado, o plugin não atrapalha nada — os eventos só não chegam.
+
+## Usando
+
+| Ação | Reação |
+|---|---|
+| Clique | Ela reage — se estiver dormindo, acorda |
+| Arrastar | Balança como pêndulo e fica onde você soltar |
+| Passar o mouse de um lado pro outro em cima dela | Carinho ♥ |
+| Botão direito nela ou no ícone da bandeja | Menu |
+
+No menu:
+- **Passear pela tela / Ficar parada**
+- **Uma Tera só** (acompanha todas as sessões e diz de qual projeto veio cada aviso) ou
+  **Uma por sessão** (cada sessão do Claude ganha a sua Tera, com cor e plaquinha do projeto)
+- **Skin**, **Voltar pro canto**, **Abrir com o Windows**, **Esconder**, **Sair**
+
+O Claude também pode fazer a Tera falar e reagir quando quiser (ferramentas `say` e `emote`).
+
+## Privacidade
+
+Tudo roda na sua máquina. O plugin manda os eventos do Claude Code só pro app, em
+`127.0.0.1:7777`; nada sai pra internet. O servidor local recusa requisições de páginas web.
+
+---
+
+## Desenvolvimento
 
 ```bash
 npm install
 npm start          # builda e abre
 npm run watch      # rebuild automático (depois: botão direito → Recarregar)
-npm run typecheck  # checa os tipos (o esbuild não checa)
+npm run typecheck
 npm run demo       # com o app aberto: passa por todos os estados
+npm run pack       # app desempacotado em release/win-unpacked (teste rápido)
+npm run dist       # instalador em release/
 ```
 
-## Interação
+Nesta pasta, `.claude/settings.json` e `.mcp.json` já conectam o Claude Code ao app
+(pra desenvolver sem instalar o plugin). **Não instale o plugin e abra sessões nesta
+pasta ao mesmo tempo** — os eventos chegariam em dobro.
 
-| Ação | Reação |
-|---|---|
-| Clique | Reage (acena, pula, "Hm?") — se estiver dormindo, acorda |
-| Arrastar | Balança como pêndulo conforme a velocidade do arrasto (o corpo fica pra trás e assenta quando você para); fica onde você soltar |
-| Passar o mouse de um lado pro outro em cima dela | Carinho ♥ |
-| Mouse pela tela | Os olhos acompanham o cursor |
-| Botão direito | Modos, voltar pro canto, recarregar, sair |
+### Como funciona
 
-## Modos (botão direito)
-
-**Movimento:** *Passear pela tela* (só quando ociosa) ou *Ficar parado aqui*.
-
-**Sessões:**
-- **Uma só** — acompanha todas as sessões do Claude; só comemora "de verdade" quando
-  todas terminam, e com várias ativas o balão mostra o projeto (`front` Terminei!).
-- **Uma por sessão** (até 5) — cada sessão ganha uma waifu com cor e plaquinha do
-  projeto. Quando a sessão fecha, ela acena e vai embora; a última fica "em casa".
-  Sessões que somem sem avisar (terminal fechado à força) expiram após 45 min.
-
-Preferências e posição ficam em `%APPDATA%/waifu-claude/config.json`.
-Só roda uma cópia do app por vez.
-
-## Integração com o Claude Code
-
-- **Hooks** (`.claude/settings.json`): `curl` repassa o JSON cru de cada evento pro app,
-  que traduz em estados — lendo, buscando, digitando, terminal, web, subagentes, erro,
-  pedindo atenção, terminou. Se o app estiver fechado, falha em silêncio.
-- **MCP** (`.mcp.json`): `http://127.0.0.1:7777/mcp` com as ferramentas `say` e `emote`.
-  A chamada vai pra waifu da sessão que a fez.
-
-Por enquanto isso vale só **dentro desta pasta**. Para todos os projetos, copie o bloco
-`hooks` para `~/.claude/settings.json` e registre o MCP no escopo de usuário:
-
-```bash
-claude mcp add --scope user --transport http waifu http://127.0.0.1:7777/mcp
+```
+Claude Code ──hooks (curl)──► POST /hook ──┐
+     │                                      ▼
+     └──MCP (HTTP)──────────► POST /mcp ──► app Electron (127.0.0.1:7777)
+                                            uma janela transparente por Tera
 ```
 
-(Vai virar um plugin do Claude Code — ver roadmap.)
-
-## Estrutura
+- **Hooks** (`plugin/hooks/hooks.json`): `curl` repassa o JSON cru de cada evento; o app
+  traduz em estados (lendo, digitando, terminal, erro, pedindo atenção, terminou...).
+  Não precisa de Node na máquina do usuário.
+- **MCP**: servido pelo próprio app em `/mcp` (Streamable HTTP, sem estado). A chamada
+  vai pra Tera da sessão que a fez.
+- **Plugin**: `plugin/` + `.claude-plugin/marketplace.json` (este repositório é o marketplace).
+  Valide com `claude plugin validate ./plugin` e `claude plugin validate .`.
 
 ```
 src/
-  shared/    protocol.ts (eventos + validação) · ipc.ts · brand.ts (nome, cores)
-  main/      main.ts · manager.ts (roteia eventos entre waifus) · entity.ts (janela)
-             sessions.ts · hooks.ts (hook → estado) · mcp.ts · server.ts
-             walker.ts (passeio) · config.ts
-  main/      skins.ts (descobre skins, gera máscaras de clique)
+  shared/    protocol.ts (eventos + validação) · ipc.ts · skin.ts · brand.ts (nomes, repo, cores)
+  main/      main.ts (ciclo de vida, bandeja) · menu.ts · manager.ts (roteia eventos entre Teras)
+             entity.ts (janela) · walker.ts (passeio) · sessions.ts · hooks.ts · mcp.ts
+             server.ts · skins.ts · config.ts · paths.ts
   preload/   preload.ts
-  renderer/  app.ts (estados + mouse) · character.ts (interface) · look.ts
-             sprite-character.ts · svg-character.ts · bubble.ts · pet.ts · states.ts
-assets/skins/  skins que vêm com o app
-scripts/       demo.ts · import-skin.ts
+  renderer/  app.ts (estados + mouse) · character.ts (interface) · sprite-character.ts
+             svg-character.ts · wobble.ts (movimento procedural) · pendulum.ts (balanço)
+             look.ts · states.ts · bubble.ts · pet.ts
+assets/      skins/ (Tera) · icons/
+plugin/      plugin do Claude Code
+scripts/     demo.ts · import-skin.ts
 ```
 
-## HTTP local
+### HTTP local
 
-Só aceita conexões de `127.0.0.1` sem header `Origin` (bloqueia páginas web).
+Só aceita `127.0.0.1` sem header `Origin`.
 
 | Rota | Corpo |
 |---|---|
 | `POST /hook` | JSON cru de um hook do Claude Code |
-| `POST /event` | evento pronto (abaixo) — vai pra todas as waifus |
-| `POST /mcp` | MCP Streamable HTTP (sem estado) |
+| `POST /event` | evento pronto — vai pra todas as Teras |
+| `POST /mcp` | MCP Streamable HTTP |
 | `GET /health` | — |
 
-Evento (`/event`, campos inválidos são descartados):
+Evento (`/event`): `state` (`idle`, `listening`, `thinking`, `reading`, `searching`, `typing`,
+`terminal`, `web`, `delegating`, `error`, `attention`, `happy`, `sad`, `sleeping`),
+`expression`, `anim`, `say`, `from`, `duration` (ms), `working`.
 
-| campo        | valores                         |
-|--------------|---------------------------------|
-| `state`      | `idle`, `listening`, `thinking`, `reading`, `searching`, `typing`, `terminal`, `web`, `delegating`, `error`, `attention`, `happy`, `sad`, `sleeping` |
-| `expression` | `neutral`, `happy`, `focused`, `confused`, `surprised`, `sleepy`, `sad` |
-| `anim`       | `bob`, `type`, `sway`, `shake`, `jump`, `breathe`, `perk`, `wave` |
-| `say`        | texto do balão (até 280 caracteres) |
-| `from`       | etiqueta de origem no balão |
-| `duration`   | ms até voltar ao estado base    |
-| `working`    | `true`/`false` — Claude está no meio de uma tarefa |
+### Skins
 
-## Skins
-
-O visual vem de uma **skin** (pacote de sprites), escolhida no botão direito → **Skin**.
-A opção *Clássica (desenho)* usa o personagem em SVG, que também é o fallback.
-
-Skins ficam em `assets/skins/<id>/` (vêm com o app) ou `%APPDATA%/waifu-claude/skins/<id>/`
-(instaladas pelo usuário), cada uma com um `skin.json`:
+Ficam em `assets/skins/<id>/` ou `%APPDATA%/Terracota/skins/<id>/`, cada uma com um `skin.json`:
 
 ```json
 {
@@ -119,31 +122,26 @@ Skins ficam em `assets/skins/<id>/` (vêm com o app) ou `%APPDATA%/waifu-claude/
   "animations": {
     "idle": { "frames": ["frames/idle/01.png", "..."], "durations": [320, 320, 150, 320] },
     "work": { "frames": ["..."], "durations": ["..."], "scale": 0.84 },
+    "drag": { "frames": ["..."], "durations": ["..."], "swing": { "feetRight": 0, "center": 1, "feetLeft": 2, "lean": 8 } },
     "land": { "frames": ["..."], "durations": ["..."], "loop": false }
   }
 }
 ```
 
-- Frames quadrados PNG transparentes, pés na mesma linha de base; `size` é o tamanho na tela.
+- Frames quadrados PNG transparentes, pés na mesma linha; `size` é o tamanho na tela.
 - Poses: `idle` (obrigatória), `walk`, `drag`, `land`, `work`, `think`, `talk`, `happy`,
   `error`, `sad`, `sleep`, `wave`, `surprised`. Pose ausente cai numa parecida.
-- `walk` olha pra `facing`; o outro lado é espelhado.
-- `scale` corrige uma animação que veio maior/menor que as outras (ancorado nos pés).
-- Por cima dos frames roda um movimento procedural (respirar, quicar, pêndulo) — `src/renderer/wobble.ts`.
-- Só a parte opaca do sprite responde ao mouse — o resto da janela deixa o clique passar.
+- `walk` olha pra `facing` (o outro lado é espelhado); `scale` corrige uma animação
+  maior/menor que as outras; `swing` escolhe o frame de `drag` pelo balanço.
+- Só a parte opaca do sprite responde ao mouse.
 
-Pra importar um pacote no formato `desktop-pet-sprite-pack-v1` (o que o GPT gerou):
+Importar um pacote no formato `desktop-pet-sprite-pack-v1`:
 
 ```bash
 npm run build
 npm run import-skin -- <pasta-do-pacote> <id> "<Nome>"
 ```
 
-Uma implementação totalmente nova (Live2D, VRM) só precisa implementar a
-interface `Character` em `src/renderer/character.ts`.
+## Licença
 
-## Roadmap
-
-- [x] Sprites (`SpriteCharacter`) e sistema de skins
-- [ ] Interações entre waifus (desviar, cumprimentar, aplaudir)
-- [ ] Plugin do Claude Code (hooks + MCP), instalador (electron-builder), bandeja, iniciar com o Windows
+Código: [MIT](LICENSE).

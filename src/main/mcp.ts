@@ -1,5 +1,6 @@
 // Servidor MCP servido pelo próprio app (Streamable HTTP, sem estado).
 // O Claude Code conecta em http://127.0.0.1:7777/mcp — não precisa de Node instalado.
+import { app } from 'electron';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
 import type { IncomingMessage, ServerResponse } from 'node:http';
@@ -11,7 +12,7 @@ const ok = { content: [{ type: 'text' as const, text: 'ok' }] };
 
 function buildServer(dispatch: (event: WaifuEvent) => void): McpServer {
   const server = new McpServer(
-    { name: MCP_SERVER_NAME, version: '0.4.0' },
+    { name: MCP_SERVER_NAME, version: app.getVersion() },
     {
       instructions:
         `Controla ${CHARACTER_NAME}, uma personagem de desktop que acompanha seu trabalho. As atividades (ler, editar, ` +

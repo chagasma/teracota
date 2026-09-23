@@ -1,6 +1,6 @@
 {
   "name": "terracota",
-  "version": "0.3.0",
+  "version": "0.1.0",
   "description": "Tera, uma personagem de desktop que acompanha o seu trabalho no Claude Code",
   "main": "dist/main.js",
   "private": true,
@@ -10,11 +10,14 @@
     "typecheck": "tsc --noEmit",
     "start": "node build.mjs && electron .",
     "demo": "node dist/scripts/demo.js",
-    "import-skin": "node dist/scripts/import-skin.js"
+    "import-skin": "node dist/scripts/import-skin.js",
+    "pack": "node build.mjs && electron-builder --win --dir",
+    "dist": "node build.mjs && electron-builder --win"
   },
   "devDependencies": {
     "@types/node": "^26.6.2",
     "electron": "^44.4.5",
+    "electron-builder": "^26.15.3",
     "esbuild": "^0.28.2",
     "typescript": "^7.0.2"
   },
@@ -22,5 +25,45 @@
     "@modelcontextprotocol/sdk": "^1.30.0",
     "zod": "^3.25.76"
   },
-  "productName": "Terracota"
+  "productName": "Terracota",
+  "build": {
+    "appId": "com.terracota.app",
+    "productName": "Terracota",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist/**/*",
+      "!dist/**/*.map",
+      "!dist/scripts/**",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "assets",
+        "to": "assets"
+      }
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "assets/icons/icon.png"
+    },
+    "nsis": {
+      "oneClick": true,
+      "perMachine": false,
+      "createDesktopShortcut": true,
+      "shortcutName": "Terracota",
+      "runAfterFinish": true
+    },
+    "publish": null
+  },
+  "author": "Thallys Morais",
+  "license": "MIT"
 }

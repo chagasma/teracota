@@ -8,6 +8,7 @@ import { loadConfig } from './config';
 import type { Entity } from './entity';
 import { EntityManager } from './manager';
 import { buildMenu } from './menu';
+import { assetsDir } from './paths';
 import { startEventServer } from './server';
 import { loadSkin } from './skins';
 
@@ -31,7 +32,7 @@ ipcMain.handle(IPC.getSkin, () => loadSkin(manager?.skinId));
 
 function createTray(): void {
   // tray@2x.png ao lado é usado automaticamente em telas com escala alta
-  tray = new Tray(nativeImage.createFromPath(path.join(app.getAppPath(), 'assets', 'icons', 'tray.png')));
+  tray = new Tray(nativeImage.createFromPath(path.join(assetsDir(), 'icons', 'tray.png')));
   tray.setToolTip(`${APP_NAME} — ${CHARACTER_NAME}`);
   tray.on('click', () => manager.setVisible(true));
   tray.on('right-click', () => tray?.popUpContextMenu(buildMenu(manager)));
