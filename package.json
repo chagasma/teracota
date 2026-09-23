@@ -1,7 +1,7 @@
 {
-  "name": "waifu-claude",
+  "name": "terracota",
   "version": "0.3.0",
-  "description": "Personagem de desktop que reage ao trabalho do Claude Code",
+  "description": "Tera, uma personagem de desktop que acompanha o seu trabalho no Claude Code",
   "main": "dist/main.js",
   "private": true,
   "scripts": {
@@ -21,5 +21,6 @@
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.30.0",
     "zod": "^3.25.76"
-  }
+  },
+  "productName": "Terracota"
 }

@@ -4,14 +4,14 @@ import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
 import type { IncomingMessage, ServerResponse } from 'node:http';
 import { z } from 'zod';
-import { CHARACTER_NAME } from '../shared/brand';
+import { CHARACTER_NAME, MCP_SERVER_NAME } from '../shared/brand';
 import { ANIMS, EXPRESSIONS, type WaifuEvent } from '../shared/protocol';
 
 const ok = { content: [{ type: 'text' as const, text: 'ok' }] };
 
 function buildServer(dispatch: (event: WaifuEvent) => void): McpServer {
   const server = new McpServer(
-    { name: 'waifu', version: '0.3.0' },
+    { name: MCP_SERVER_NAME, version: '0.4.0' },
     {
       instructions:
         `Controla ${CHARACTER_NAME}, uma personagem de desktop que acompanha seu trabalho. As atividades (ler, editar, ` +

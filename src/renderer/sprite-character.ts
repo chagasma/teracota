@@ -29,7 +29,8 @@ export class SpriteCharacter implements Character {
   private readonly canvas: HTMLCanvasElement;
   private readonly ctx: CanvasRenderingContext2D;
   private readonly propEl: HTMLElement;
-  private readonly frames: Partial<Record<Pose, HTMLImageElement[]>> = {};
+  /** Frames já redimensionados pro tamanho do canvas (desenhar 1:1 é bem mais barato) */
+  private readonly frames: Partial<Record<Pose, ImageBitmap[]>> = {};
   private look: Look = { pose: 'idle', expression: 'neutral', anim: null };
   private motion: Motion = null;
   private dir: 1 | -1 = 1;
@@ -115,7 +116,8 @@ export class SpriteCharacter implements Character {
         const img = new Image();
         img.src = new URL(src, baseUrl).href;
         await img.decode();
-        return img;
+        const size = this.canvas.width;
+        return createImageBitmap(img, { resizeWidth: size, resizeHeight: size, resizeQuality: 'high' });
       }));
     }));
   }
@@ -175,9 +177,20 @@ export class SpriteCharacter implements Character {
     }, anim.durations[p.frame] ?? 150);
   }
 
-  /** Desenha a cada quadro da tela: frame atual + escala da animação + movimento procedural */
-  private render = (): void => {
+  /** Quadros por segundo do desenho: fluido quando está se movendo, econômico quando parada */
+  private targetFps(): number {
+    if (this.motion) return 60;
+    if (this.playing?.pose === 'sleep') return 15;
+    return 24;
+  }
+
+  private lastDraw = 0;
+
+  /** Desenha o frame atual + escala da animação + movimento procedural */
+  private render = (now: number = performance.now()): void => {
     requestAnimationFrame(this.render);
+    if (now - this.lastDraw < 1000 / this.targetFps() - 2) return;
+    this.lastDraw = now;
     const p = this.playing;
     const anim = p && this.skin.manifest.animations[p.pose];
     if (!p || !anim) return;
@@ -198,7 +211,6 @@ export class SpriteCharacter implements Character {
 
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.clearRect(0, 0, w, h);
-    ctx.imageSmoothingQuality = 'high';
     ctx.translate(pivotX + wob.dx * px, pivotY + wob.dy * px);
     ctx.rotate((wob.rot * Math.PI) / 180);
     ctx.scale(wob.sx * (p.flip ? -1 : 1), wob.sy);

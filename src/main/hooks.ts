@@ -1,5 +1,6 @@
 // Tradução dos eventos de hook do Claude Code (JSON cru vindo do curl) para
 // eventos do personagem.
+import { MCP_SERVER_NAME } from '../shared/brand';
 import type { StateName, WaifuEvent } from '../shared/protocol';
 
 export interface HookInput {
@@ -10,7 +11,7 @@ export interface HookInput {
   source?: string;
 }
 
-export const WAIFU_TOOL_PREFIX = 'mcp__waifu__';
+export const WAIFU_TOOL_PREFIX = `mcp__${MCP_SERVER_NAME}__`;
 
 const TOOL_STATES: Record<string, StateName> = {
   Read: 'reading', NotebookRead: 'reading',

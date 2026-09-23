@@ -14,6 +14,8 @@ export interface EntityOptions {
   position: Point;
   moveMode: MoveMode;
   identity: Identity;
+  /** false = nasce escondida (app escondido pela bandeja) */
+  visible?: boolean;
   /** Chamado quando a entidade para num lugar novo (arrastada ou fim do passeio) */
   onSettle?: (p: Point) => void;
 }
@@ -59,6 +61,7 @@ export class Entity {
       hasShadow: false,
       skipTaskbar: true,
       alwaysOnTop: true,
+      show: false, // aparece sem roubar o foco (showInactive abaixo)
       webPreferences: {
         preload: path.join(__dirname, 'preload.js'),
         contextIsolation: true,
@@ -71,6 +74,7 @@ export class Entity {
     // Cliques atravessam a janela, exceto sobre o personagem (o renderer alterna isso)
     this.win.setIgnoreMouseEvents(true, { forward: true });
     this.win.loadFile(path.join(__dirname, 'renderer', 'index.html'));
+    this.win.once('ready-to-show', () => { if (opts.visible !== false) this.win.showInactive(); });
     this.win.webContents.on('did-finish-load', () => {
       this.ready = true;
       this.win.webContents.send(IPC.mode, { mode: this.moveMode, announce: false });
@@ -148,6 +152,13 @@ export class Entity {
 
   settle(): void {
     if (this.alive) this.onSettle?.(this.position);
+  }
+
+  setVisible(visible: boolean): void {
+    if (!this.alive) return;
+    if (visible) this.win.showInactive();
+    else this.win.hide();
+    this.walker.setPaused(!visible);
   }
 
   /** Despede-se e fecha a janela */

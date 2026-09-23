@@ -3,7 +3,7 @@
 // - multi:  uma waifu por sessão; a primeira ("de casa") nunca vai embora
 import type { WebContents } from 'electron';
 import { screen } from 'electron';
-import { ENTITY_COLORS } from '../shared/brand';
+import { CHARACTER_NAME, ENTITY_COLORS } from '../shared/brand';
 import type { EntityMode, Identity, MoveMode, Point } from '../shared/ipc';
 import type { WaifuEvent } from '../shared/protocol';
 import { saveConfig, type Config } from './config';
@@ -35,8 +35,32 @@ export class EntityManager {
     return this.config.moveMode;
   }
 
+  private visible = true;
+
+  get isVisible(): boolean {
+    return this.visible;
+  }
+
   start(): void {
     this.spawnHome();
+    if (!this.config.onboarded) {
+      this.updateConfig({ onboarded: true });
+      setTimeout(() => this.entities[0]?.send({
+        state: 'attention',
+        duration: 6000,
+        say: `Oi! Eu sou a ${CHARACTER_NAME} 👋 Me conecta ao Claude Code pelo menu (botão direito em mim)!`,
+      }), 1500);
+    }
+  }
+
+  setVisible(visible: boolean): void {
+    this.visible = visible;
+    for (const e of this.entities) e.setVisible(visible);
+  }
+
+  /** Traz todas pro canto (ex.: se alguma se perdeu num monitor desligado) */
+  resetPositions(): void {
+    for (const e of this.entities) e.resetPosition();
   }
 
   byWebContents(wc: WebContents): Entity | undefined {
@@ -195,6 +219,7 @@ export class EntityManager {
     const entity = new Entity({
       position,
       identity,
+      visible: this.visible,
       moveMode: this.moveMode,
       // só a primeira waifu lembra a posição entre execuções
       onSettle: persist ? ({ x, y }) => this.updateConfig({ x, y }) : undefined,

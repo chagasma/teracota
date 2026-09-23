@@ -87,7 +87,7 @@ export function startEventServer(port: number, handlers: ServerHandlers): http.S
       try {
         await handleMcpRequest(req, res, body, handlers.onMcp);
       } catch (err) {
-        console.error('[waifu] erro no MCP:', err);
+        console.error('[terracota] erro no MCP:', err);
         if (!res.headersSent) res.writeHead(500).end();
       }
       return;
@@ -108,7 +108,7 @@ export function startEventServer(port: number, handlers: ServerHandlers): http.S
     handlers.onEvent(event);
     res.writeHead(204).end();
   });
-  server.on('error', (err) => console.error(`[waifu] servidor na porta ${port} falhou:`, err.message));
-  server.listen(port, '127.0.0.1', () => console.log(`[waifu] ouvindo em http://127.0.0.1:${port}`));
+  server.on('error', (err) => console.error(`[terracota] servidor na porta ${port} falhou:`, err.message));
+  server.listen(port, '127.0.0.1', () => console.log(`[terracota] ouvindo em http://127.0.0.1:${port}`));
   return server;
 }

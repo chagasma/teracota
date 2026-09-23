@@ -32,7 +32,7 @@ export interface WaifuEvent {
 }
 
 export function getPort(): number {
-  return Number(process.env.WAIFU_PORT) || DEFAULT_PORT;
+  return Number(process.env.TERRACOTA_PORT) || DEFAULT_PORT;
 }
 
 function isOneOf<T extends string>(list: readonly T[], value: unknown): value is T {

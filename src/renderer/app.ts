@@ -240,7 +240,7 @@ async function createCharacter(): Promise<Character> {
     try {
       return await SpriteCharacter.create(characterEl, skin);
     } catch (err) {
-      console.error('[waifu] skin falhou, usando o desenho:', err);
+      console.error('[terracota] skin falhou, usando o desenho:', err);
       characterEl.removeAttribute('style');
       characterEl.className = '';
     }

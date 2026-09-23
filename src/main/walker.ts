@@ -52,6 +52,14 @@ export class Walker {
     else this.restUntil = Math.max(this.restUntil, Date.now() + rand(1500, 4000));
   }
 
+  private paused = false;
+
+  /** Janela escondida: não anda (mas lembra se estava liberado) */
+  setPaused(paused: boolean): void {
+    this.paused = paused;
+    if (paused) this.halt();
+  }
+
   /** O usuário mexeu no personagem: para e espera um pouco antes de voltar a andar */
   interrupt(): void {
     this.halt();
@@ -69,7 +77,7 @@ export class Walker {
     const now = Date.now();
     const dt = Math.min(0.1, (now - this.lastTick) / 1000);
     this.lastTick = now;
-    if (this.mode !== 'roam' || !this.allowed || this.win.isDestroyed()) return;
+    if (this.mode !== 'roam' || !this.allowed || this.paused || this.win.isDestroyed()) return;
 
     if (!this.target) {
       if (now >= this.restUntil) this.pickTarget();
