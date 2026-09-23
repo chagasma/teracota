@@ -1,0 +1,19 @@
+import { contextBridge, ipcRenderer } from 'electron';
+import { IPC, type WaifuApi } from '../shared/ipc';
+
+const api: WaifuApi = {
+  getSkin: () => ipcRenderer.invoke(IPC.getSkin),
+  onEvent: (cb) => { ipcRenderer.on(IPC.event, (_e, event) => cb(event)); },
+  onWalk: (cb) => { ipcRenderer.on(IPC.walk, (_e, info) => cb(info)); },
+  onCursor: (cb) => { ipcRenderer.on(IPC.cursor, (_e, p) => cb(p)); },
+  onMode: (cb) => { ipcRenderer.on(IPC.mode, (_e, info) => cb(info)); },
+  onIdentity: (cb) => { ipcRenderer.on(IPC.identity, (_e, identity) => cb(identity)); },
+  onLeave: (cb) => { ipcRenderer.on(IPC.leave, () => cb()); },
+  setIgnoreMouse: (ignore) => ipcRenderer.send(IPC.setIgnoreMouse, ignore),
+  openContextMenu: () => ipcRenderer.send(IPC.contextMenu),
+  moveBy: (dx, dy) => ipcRenderer.send(IPC.moveBy, dx, dy),
+  dragEnd: () => ipcRenderer.send(IPC.dragEnd),
+  setWalkAllowed: (allowed) => ipcRenderer.send(IPC.walkAllowed, allowed),
+};
+
+contextBridge.exposeInMainWorld('waifu', api);

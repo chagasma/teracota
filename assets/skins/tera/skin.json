@@ -1,0 +1,198 @@
+{
+  "name": "Tera",
+  "size": 260,
+  "facing": "right",
+  "animations": {
+    "idle": {
+      "frames": [
+        "frames/idle/01.png",
+        "frames/idle/02.png",
+        "frames/idle/03.png",
+        "frames/idle/04.png"
+      ],
+      "durations": [
+        320,
+        320,
+        150,
+        320
+      ]
+    },
+    "walk": {
+      "frames": [
+        "frames/walk/01.png",
+        "frames/walk/02.png",
+        "frames/walk/03.png",
+        "frames/walk/04.png"
+      ],
+      "durations": [
+        140,
+        140,
+        140,
+        140
+      ]
+    },
+    "drag": {
+      "frames": [
+        "frames/drag/01.png",
+        "frames/drag/02.png",
+        "frames/drag/03.png",
+        "frames/drag/04.png"
+      ],
+      "durations": [
+        190,
+        150,
+        190,
+        150
+      ],
+      "swing": {
+        "feetRight": 0,
+        "center": 1,
+        "feetLeft": 2,
+        "lean": 8
+      }
+    },
+    "land": {
+      "frames": [
+        "frames/land/01.png",
+        "frames/land/02.png",
+        "frames/land/03.png",
+        "frames/land/04.png"
+      ],
+      "durations": [
+        140,
+        150,
+        140,
+        260
+      ],
+      "loop": false
+    },
+    "work": {
+      "frames": [
+        "frames/work/01.png",
+        "frames/work/02.png",
+        "frames/work/03.png",
+        "frames/work/04.png"
+      ],
+      "durations": [
+        160,
+        160,
+        160,
+        160
+      ],
+      "scale": 0.84
+    },
+    "think": {
+      "frames": [
+        "frames/think/01.png",
+        "frames/think/02.png",
+        "frames/think/03.png",
+        "frames/think/04.png"
+      ],
+      "durations": [
+        300,
+        300,
+        170,
+        300
+      ]
+    },
+    "talk": {
+      "frames": [
+        "frames/talk/01.png",
+        "frames/talk/02.png",
+        "frames/talk/03.png",
+        "frames/talk/04.png"
+      ],
+      "durations": [
+        150,
+        130,
+        150,
+        130
+      ]
+    },
+    "happy": {
+      "frames": [
+        "frames/happy/01.png",
+        "frames/happy/02.png",
+        "frames/happy/03.png",
+        "frames/happy/04.png"
+      ],
+      "durations": [
+        170,
+        140,
+        180,
+        230
+      ]
+    },
+    "error": {
+      "frames": [
+        "frames/error/01.png",
+        "frames/error/02.png",
+        "frames/error/03.png",
+        "frames/error/04.png"
+      ],
+      "durations": [
+        180,
+        150,
+        150,
+        260
+      ]
+    },
+    "sad": {
+      "frames": [
+        "frames/sad/01.png",
+        "frames/sad/02.png",
+        "frames/sad/03.png",
+        "frames/sad/04.png"
+      ],
+      "durations": [
+        360,
+        360,
+        420,
+        360
+      ]
+    },
+    "sleep": {
+      "frames": [
+        "frames/sleep/01.png",
+        "frames/sleep/02.png",
+        "frames/sleep/03.png",
+        "frames/sleep/04.png"
+      ],
+      "durations": [
+        360,
+        360,
+        360,
+        360
+      ],
+      "scale": 0.84
+    },
+    "wave": {
+      "frames": [
+        "frames/wave/01.png",
+        "frames/wave/02.png",
+        "frames/wave/03.png",
+        "frames/wave/04.png"
+      ],
+      "durations": [
+        140,
+        140,
+        140,
+        140
+      ]
+    },
+    "surprised": {
+      "frames": [
+        "frames/surprised/01.png",
+        "frames/surprised/02.png",
+        "frames/surprised/03.png",
+        "frames/surprised/04.png"
+      ],
+      "durations": [
+        230,
+        130,
+        180,
+        260
+      ]
+    }
+  }
+}

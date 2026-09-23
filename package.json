@@ -1,0 +1,25 @@
+{
+  "name": "waifu-claude",
+  "version": "0.3.0",
+  "description": "Personagem de desktop que reage ao trabalho do Claude Code",
+  "main": "dist/main.js",
+  "private": true,
+  "scripts": {
+    "build": "node build.mjs",
+    "watch": "node build.mjs --watch",
+    "typecheck": "tsc --noEmit",
+    "start": "node build.mjs && electron .",
+    "demo": "node dist/scripts/demo.js",
+    "import-skin": "node dist/scripts/import-skin.js"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.2",
+    "electron": "^44.4.5",
+    "esbuild": "^0.28.2",
+    "typescript": "^7.0.2"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.30.0",
+    "zod": "^3.25.76"
+  }
+}

@@ -1,0 +1,156 @@
+:root {
+  --skin: #ffe3d3;
+  --hair: #d97757; /* cor da entidade — trocada via identidade */
+  --hair-dark: color-mix(in srgb, var(--hair) 78%, black);
+  --ink: #2b2230;
+  --blush: #ff9aa2;
+  --bubble-bg: #fffdf8;
+  --bubble-ink: #2b2230;
+}
+
+html, body {
+  margin: 0;
+  height: 100%;
+  background: transparent;
+  overflow: hidden;
+  user-select: none;
+  font-family: "Segoe UI", system-ui, sans-serif;
+}
+
+#stage {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+#character {
+  width: 200px;
+  height: 220px;
+  transform-origin: 50% 100%;
+}
+#character svg { width: 100%; height: 100%; overflow: visible; }
+body.hovering { cursor: grab; }
+body.hovering:active { cursor: grabbing; }
+
+/* ---------- personagem de sprites ---------- */
+.sprite-character { position: relative; }
+.sprite-character canvas { width: 100%; height: 100%; display: block; }
+.sprite-character .prop {
+  position: absolute;
+  top: 10%;
+  right: 16%;
+  font-size: 26px;
+  pointer-events: none;
+  filter: drop-shadow(0 1px 1px rgba(0,0,0,.25));
+}
+
+/* ---------- plaquinha com o projeto (modo uma por sessão) ---------- */
+#tag {
+  height: 20px;
+  margin-top: 2px;
+  padding: 0 10px;
+  border: 2px solid var(--ink);
+  border-radius: 10px;
+  background: var(--hair);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 20px;
+  max-width: 180px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  pointer-events: none;
+}
+#tag.empty { visibility: hidden; }
+
+/* ---------- indo embora ---------- */
+#stage { transition: opacity .8s ease-in 1.4s, transform .8s ease-in 1.4s; }
+#stage.leaving { opacity: 0; transform: translateY(12px); }
+
+/* ---------- balão de fala ---------- */
+#bubble {
+  position: relative;
+  max-width: 280px;
+  margin-bottom: 10px;
+  padding: 10px 14px;
+  background: var(--bubble-bg);
+  color: var(--bubble-ink);
+  border: 2px solid var(--ink);
+  border-radius: 14px;
+  font-size: 14px;
+  line-height: 1.35;
+  box-shadow: 0 3px 0 var(--ink);
+  pointer-events: none;
+  transition: opacity .2s, transform .2s;
+  word-wrap: break-word;
+}
+#bubble::after {
+  content: "";
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  margin-left: -8px;
+  border: 8px solid transparent;
+  border-top-color: var(--ink);
+  border-bottom: 0;
+}
+#bubble.hidden { opacity: 0; transform: translateY(6px) scale(.96); }
+#bubble-from {
+  display: inline-block;
+  margin-right: 6px;
+  padding: 0 6px;
+  border-radius: 6px;
+  background: var(--hair);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 600;
+  vertical-align: 1px;
+}
+#bubble-from[hidden] { display: none; }
+
+/* ---------- prop (ícone da atividade) ---------- */
+.prop { font-size: 30px; transition: opacity .2s; }
+
+/* ---------- animações ---------- */
+@keyframes bob     { 0%,100% { transform: translateY(0) }   50% { transform: translateY(-4px) } }
+@keyframes type    { 0%,100% { transform: translateY(0) }   50% { transform: translateY(-2px) rotate(-1deg) } }
+@keyframes sway    { 0%,100% { transform: rotate(-2deg) }  50% { transform: rotate(2deg) } }
+@keyframes shake   { 0%,100% { transform: translateX(0) } 20%,60% { transform: translateX(-6px) } 40%,80% { transform: translateX(6px) } }
+@keyframes jump    { 0%,100% { transform: translateY(0) scale(1,1) } 15% { transform: translateY(0) scale(1.08,.9) } 45% { transform: translateY(-28px) scale(.95,1.06) } 75% { transform: translateY(0) scale(1.05,.95) } }
+@keyframes breathe { 0%,100% { transform: scale(1,1) }      50% { transform: scale(1.02,.98) } }
+@keyframes perk    { 0% { transform: translateY(0) } 40% { transform: translateY(-10px) } 100% { transform: translateY(0) } }
+@keyframes wave    { 0%,100% { transform: rotate(0) } 25% { transform: rotate(-6deg) } 75% { transform: rotate(6deg) } }
+
+#character.anim-bob     { animation: bob 2.4s ease-in-out infinite; }
+#character.anim-type    { animation: type .25s linear infinite; }
+#character.anim-sway    { animation: sway 1.8s ease-in-out infinite; }
+#character.anim-shake   { animation: shake .45s ease-in-out 2; }
+#character.anim-jump    { animation: jump .7s ease-out 2; }
+#character.anim-breathe { animation: breathe 3.5s ease-in-out infinite; }
+#character.anim-perk    { animation: perk .4s ease-out 1; }
+#character.anim-wave    { animation: wave .5s ease-in-out 4; }
+
+/* ---------- passeio e arrastar (no wrapper, pra somar com a animação do estado) ---------- */
+#walker { --dir: 1; transform-origin: 50% 100%; }
+.foot { transform-box: fill-box; transform-origin: center; }
+
+@keyframes walk-hop {
+  0%,100% { transform: translateY(0) rotate(calc(var(--dir) * 2deg)) }
+  50%     { transform: translateY(-6px) rotate(calc(var(--dir) * 5deg)) }
+}
+@keyframes step   { 0%,100% { transform: translateY(0) } 50% { transform: translateY(-5px) } }
+
+#walker.walking { animation: walk-hop .36s ease-in-out infinite; }
+#walker.walking .foot-l { animation: step .36s ease-in-out infinite; }
+#walker.walking .foot-r { animation: step .36s ease-in-out infinite .18s; }
+/* o balanço ao ser carregada é físico (pendulum.ts) — aqui só o ponto de apoio */
+#walker.dragged { transform-origin: 50% 0; }
+#walker.dragged #character { cursor: grabbing; }
+
+@media (prefers-reduced-motion: reduce) {
+  #character, #walker, .foot { animation: none !important; }
+}
