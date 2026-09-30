@@ -138,7 +138,10 @@ export class SvgCharacter implements Character {
 
   lookAt(p: Point | null): void {
     if (this.motion) return;
-    if (!p) return this.glance(0, 0);
+    if (!p) {
+      this.glance(0, 0);
+      return;
+    }
     const r = this.root.getBoundingClientRect();
     const dx = p.x - (r.left + r.width * EYE_CENTER.x);
     const dy = p.y - (r.top + r.height * EYE_CENTER.y);
