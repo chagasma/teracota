@@ -50,6 +50,7 @@ if (!app.requestSingleInstanceLock()) {
   });
 
   app.whenReady().then(() => {
+    app.dock?.hide(); // macOS: vive na barra de menus, sem ícone no Dock
     manager = new EntityManager(loadConfig());
     manager.start();
     createTray();

@@ -8,11 +8,8 @@ export const MCP_SERVER_NAME = 'terracota';
 /** Repositório no GitHub (marketplace do plugin e downloads) */
 export const GITHUB_REPO = 'kyotodevIndie/tera-agent-companion';
 
-/** Comandos pra instalar o plugin no Claude Code */
-export const PLUGIN_INSTALL_COMMANDS = [
-  `/plugin marketplace add ${GITHUB_REPO}`,
-  '/plugin install terracota@terracota',
-];
+/** Plugin no formato nome@marketplace */
+export const PLUGIN_ID = 'terracota@terracota';
 
 /** Cores das entidades no modo "uma por sessão" (a primeira é a cor padrão) */
 export const ENTITY_COLORS = ['#D97757', '#5B8DD9', '#6DAA5C', '#A874D1', '#D9A13B'] as const;

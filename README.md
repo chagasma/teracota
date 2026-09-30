@@ -17,13 +17,17 @@ comemora quando termina — e passeia pela tela quando está tudo calmo.
    [Releases](https://github.com/kyotodevIndie/tera-agent-companion/releases) e rode.
    O Windows pode mostrar o aviso do SmartScreen (o app ainda não é assinado):
    **Mais informações → Executar assim mesmo**.
-2. Conecte ao Claude Code — no Claude Code, rode:
+2. Conecte ao Claude Code: botão direito na Tera → **Conectar ao Claude Code**.
+   Ela instala o plugin sozinha. Se preferir fazer à mão, rode num terminal:
+   ```
+   claude plugin marketplace add kyotodevIndie/tera-agent-companion; claude plugin install terracota@terracota
+   ```
+   ou, dentro do Claude Code, estes dois comandos **um de cada vez**:
    ```
    /plugin marketplace add kyotodevIndie/tera-agent-companion
    /plugin install terracota@terracota
    ```
-   (ou clique com o botão direito na Tera → **Conectar ao Claude Code**, que copia esses comandos.)
-3. Pronto. Abra uma sessão do Claude Code e a Tera começa a reagir.
+3. Pronto. Abra (ou reinicie) uma sessão do Claude Code e a Tera começa a reagir.
 
 Com o app fechado, o plugin não atrapalha nada — os eventos só não chegam.
 

@@ -1,7 +1,8 @@
 // Menu do app — o mesmo no botão direito da Tera e no ícone da bandeja.
 import { app, clipboard, Menu, type MenuItemConstructorOptions } from 'electron';
-import { APP_NAME, CHARACTER_NAME, PLUGIN_INSTALL_COMMANDS } from '../shared/brand';
+import { APP_NAME, CHARACTER_NAME } from '../shared/brand';
 import { SVG_SKIN_ID } from '../shared/skin';
+import { installPlugin, TERMINAL_COMMAND } from './connect';
 import type { Entity } from './entity';
 import { MAX_ENTITIES, type EntityManager } from './manager';
 import { listSkins, loadSkin } from './skins';
@@ -16,13 +17,34 @@ function skinItems(manager: EntityManager): MenuItemConstructorOptions[] {
   ];
 }
 
-function connectToClaude(manager: EntityManager): void {
-  clipboard.writeText(PLUGIN_INSTALL_COMMANDS.join('\n'));
+const STARTUP_LABEL = process.platform === 'win32' ? 'Abrir com o Windows' : 'Abrir ao iniciar o sistema';
+
+let connecting = false;
+
+async function connectToClaude(manager: EntityManager): Promise<void> {
+  if (connecting) return;
+  connecting = true;
   manager.setVisible(true);
+  manager.broadcast({ state: 'thinking', say: 'Conectando ao Claude Code... ⏳' });
+  const result = await installPlugin();
+  connecting = false;
+
+  if (result.ok) {
+    manager.broadcast({
+      state: 'happy',
+      duration: 8000,
+      say: 'Pronto, conectei! Sessões do Claude que já estavam abertas precisam ser reiniciadas 😊',
+    });
+    return;
+  }
+  clipboard.writeText(TERMINAL_COMMAND);
+  if (result.reason === 'failed') console.error('[terracota] falha ao instalar o plugin:\n', result.output);
   manager.broadcast({
-    state: 'happy',
-    duration: 6000,
-    say: 'Copiei os comandos! Cola no Claude Code (um de cada vez) e pronto 😊',
+    state: result.reason === 'not-found' ? 'attention' : 'error',
+    duration: 9000,
+    say: result.reason === 'not-found'
+      ? 'Não achei o Claude Code aqui 🤔 Copiei um comando: cola num terminal e aperta Enter!'
+      : 'Algo deu errado 😣 Copiei o comando: cola num terminal pra ver o que houve.',
   });
 }
 
@@ -49,9 +71,9 @@ export function buildMenu(manager: EntityManager, entity?: Entity): Menu {
     { label: 'Skin', submenu: skinItems(manager) },
     { label: 'Voltar pro canto', click: () => (entity ? entity.resetPosition() : manager.resetPositions()) },
     { type: 'separator' },
-    { label: 'Conectar ao Claude Code (copiar comandos)', click: () => connectToClaude(manager) },
+    { label: 'Conectar ao Claude Code', click: () => void connectToClaude(manager) },
     {
-      label: app.isPackaged ? 'Abrir com o Windows' : 'Abrir com o Windows (só no app instalado)',
+      label: app.isPackaged ? STARTUP_LABEL : `${STARTUP_LABEL} (só no app instalado)`,
       type: 'checkbox',
       checked: autoStart,
       enabled: app.isPackaged,
