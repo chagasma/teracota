@@ -71,5 +71,13 @@
     "publish": null
   },
   "author": "Thallys Morais",
-  "license": "MIT"
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/OWNER/terracota.git"
+  },
+  "bugs": {
+    "url": "https://github.com/OWNER/terracota/issues"
+  },
+  "homepage": "https://github.com/OWNER/terracota#readme"
 }

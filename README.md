@@ -1,11 +1,15 @@
 # Terracota
 
+[![CI](https://github.com/OWNER/terracota/actions/workflows/ci.yml/badge.svg)](https://github.com/OWNER/terracota/actions/workflows/ci.yml)
+
 **Tera** é uma gatinha que mora no seu desktop e acompanha o seu trabalho no
 [Claude Code](https://claude.com/claude-code): senta no notebook quando o Claude
 está editando, fica confusa quando dá erro, acena quando ele precisa de você,
 comemora quando termina — e passeia pela tela quando está tudo calmo.
 
 > Projeto independente, não é afiliado à Anthropic.
+>
+> **Beta, só Windows por enquanto.** macOS e Linux estão no [roadmap](ROADMAP.md).
 
 ## Instalar
 
@@ -40,10 +44,30 @@ No menu:
 
 O Claude também pode fazer a Tera falar e reagir quando quiser (ferramentas `say` e `emote`).
 
+## Problemas comuns
+
+**O Claude Code avisa que o MCP `terracota` falhou ao conectar.** O app está fechado.
+Abra o Terracota e reinicie a sessão do Claude Code (ou rode `/mcp` pra reconectar).
+Sem o app, nada quebra — a Tera só não aparece.
+
+**A Tera sumiu.** Clique no ícone dela na bandeja do sistema (perto do relógio) →
+**Voltar pro canto**. Se estiver escondida, **Mostrar Tera**.
+
+**Não consigo clicar nela.** Só o desenho responde ao mouse — o fundo transparente
+deixa o clique passar pra janela de trás, de propósito. Se nem o desenho responder,
+[abra um bug](../../issues/new/choose) contando o que você fazia antes.
+
 ## Privacidade
 
 Tudo roda na sua máquina. O plugin manda os eventos do Claude Code só pro app, em
 `127.0.0.1:7777`; nada sai pra internet. O servidor local recusa requisições de páginas web.
+Detalhes em [SECURITY.md](SECURITY.md).
+
+## Contribuindo
+
+Contribuições são muito bem-vindas — código, skins, traduções, ideias e bugs.
+Comece pelo [CONTRIBUTING.md](CONTRIBUTING.md) e veja o que vem por aí no
+[ROADMAP.md](ROADMAP.md). O histórico de versões está no [CHANGELOG.md](CHANGELOG.md).
 
 ---
 
@@ -52,16 +76,11 @@ Tudo roda na sua máquina. O plugin manda os eventos do Claude Code só pro app,
 ```bash
 npm install
 npm start          # builda e abre
-npm run watch      # rebuild automático (depois: botão direito → Recarregar)
-npm run typecheck
-npm run demo       # com o app aberto: passa por todos os estados
-npm run pack       # app desempacotado em release/win-unpacked (teste rápido)
-npm run dist       # instalador em release/
+npm run check      # typecheck + lint + testes
 ```
 
-Nesta pasta, `.claude/settings.json` e `.mcp.json` já conectam o Claude Code ao app
-(pra desenvolver sem instalar o plugin). **Não instale o plugin e abra sessões nesta
-pasta ao mesmo tempo** — os eventos chegariam em dobro.
+Todos os comandos, como conectar o seu Claude Code ao app em desenvolvimento e o
+estilo de código estão no [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ### Como funciona
 
@@ -145,3 +164,5 @@ npm run import-skin -- <pasta-do-pacote> <id> "<Nome>"
 ## Licença
 
 Código: [MIT](LICENSE).
+
+Arte da Tera (`assets/`): licença a definir antes do lançamento.

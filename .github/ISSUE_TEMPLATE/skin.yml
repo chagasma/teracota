@@ -1,0 +1,32 @@
+name: 🎨 Nova skin
+description: Propor (ou pedir ajuda com) uma skin de personagem
+labels: [skin]
+body:
+  - type: textarea
+    id: about
+    attributes:
+      label: Sobre a skin
+      description: Quem é o personagem, estilo, prévia (gif ou imagem).
+    validations:
+      required: true
+  - type: dropdown
+    id: license
+    attributes:
+      label: Licença da arte
+      description: Só aceitamos arte que você fez ou tem direito de distribuir.
+      options:
+        - Fiz eu — libero sob a mesma licença da arte do projeto
+        - Fiz eu — outra licença (explico abaixo)
+        - Gerada por IA sob minha direção
+        - Ainda não sei
+    validations:
+      required: true
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Checklist
+      options:
+        - label: Tem pelo menos a pose `idle` (veja "Skins" no CONTRIBUTING)
+        - label: Frames quadrados, fundo transparente, pés na mesma linha
+        - label: Não é personagem de terceiros (marca/anime/jogo) sem permissão
+          required: true

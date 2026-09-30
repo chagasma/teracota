@@ -1,0 +1,23 @@
+name: ✨ Sugestão
+description: Uma ideia pra Tera ou pro app
+labels: [enhancement]
+body:
+  - type: textarea
+    id: idea
+    attributes:
+      label: Qual é a ideia?
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: Por que seria útil?
+      description: Que situação do seu dia a dia isso melhora?
+  - type: checkboxes
+    id: roadmap
+    attributes:
+      label: Antes de abrir
+      options:
+        - label: Olhei o [ROADMAP](../blob/main/ROADMAP.md) e isso ainda não está lá
+          required: true
+        - label: Topo implementar (com ajuda, se precisar)

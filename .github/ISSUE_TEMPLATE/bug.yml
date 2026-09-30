@@ -1,0 +1,58 @@
+name: 🐛 Bug
+description: Algo não funciona como deveria
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: O que aconteceu?
+      description: E o que você esperava que acontecesse.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Como reproduzir
+      description: O que você estava fazendo logo antes? (arrastando, ela andando, trocando de skin, com várias sessões do Claude...)
+      placeholder: |
+        1. ...
+        2. ...
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Versão do Terracota
+      placeholder: 0.1.0
+    validations:
+      required: true
+  - type: input
+    id: os
+    attributes:
+      label: Sistema operacional
+      placeholder: Windows 11 24H2
+    validations:
+      required: true
+  - type: input
+    id: monitors
+    attributes:
+      label: Monitores e escala
+      description: Vários bugs dependem disso.
+      placeholder: 2 monitores — 1920x1080 a 100% e 2560x1440 a 125%
+  - type: dropdown
+    id: mode
+    attributes:
+      label: Modo
+      options:
+        - Uma Tera só
+        - Uma por sessão
+  - type: input
+    id: claude
+    attributes:
+      label: Versão do Claude Code e onde você usa
+      placeholder: 2.1.224, app desktop (aba Code)
+  - type: textarea
+    id: extra
+    attributes:
+      label: Prints, vídeo ou logs
+      description: Se rodou pelo terminal (`npm start`), os logs com `[terracota]` ajudam.
