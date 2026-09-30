@@ -7,6 +7,10 @@
 está editando, fica confusa quando dá erro, acena quando ele precisa de você,
 comemora quando termina — e passeia pela tela quando está tudo calmo.
 
+Hoje ela acompanha o **Claude Code**. Outros agentes (OpenCode, Codex) estão no
+[roadmap](docs/INTEGRACOES.md), e qualquer ferramenta já pode dar vida à Tera pela
+[API local](docs/API.md).
+
 > Projeto independente, não é afiliado à Anthropic.
 >
 > **Beta, só Windows por enquanto.** macOS e Linux estão no [roadmap](ROADMAP.md).
@@ -43,7 +47,7 @@ Com o app fechado, o plugin não atrapalha nada — os eventos só não chegam.
 No menu:
 - **Passear pela tela / Ficar parada**
 - **Uma Tera só** (acompanha todas as sessões e diz de qual projeto veio cada aviso) ou
-  **Uma por sessão** (cada sessão do Claude ganha a sua Tera, com cor e plaquinha do projeto)
+  **Uma por sessão de agente** (cada sessão ganha a sua Tera, com cor e plaquinha do projeto)
 - **Skin**, **Voltar pro canto**, **Abrir com o Windows**, **Esconder**, **Sair**
 
 O Claude também pode fazer a Tera falar e reagir quando quiser (ferramentas `say` e `emote`).
@@ -59,7 +63,7 @@ Sem o app, nada quebra — a Tera só não aparece.
 
 **Não consigo clicar nela.** Só o desenho responde ao mouse — o fundo transparente
 deixa o clique passar pra janela de trás, de propósito. Se nem o desenho responder,
-[abra um bug](../../issues/new/choose) contando o que você fazia antes.
+[abra um bug](https://github.com/kyotodevIndie/tera-agent-companion/issues/new/choose) contando o que você fazia antes.
 
 ## Privacidade
 
@@ -89,49 +93,23 @@ estilo de código estão no [CONTRIBUTING.md](CONTRIBUTING.md).
 ### Como funciona
 
 ```
-Claude Code ──hooks (curl)──► POST /hook ──┐
-     │                                      ▼
-     └──MCP (HTTP)──────────► POST /mcp ──► app Electron (127.0.0.1:7777)
-                                            uma janela transparente por Tera
+ Claude Code ─ hooks (curl) ─► /hook ────────┐  adapter → sinal normalizado
+ Qualquer ferramenta ─► /api/v1/event ───────┤
+ MCP (say/emote) ─► /mcp ────────────────────┤
+                                             ▼
+             Companion Core (sessões, uma ou várias Teras) ─► renderer
+             app Electron em 127.0.0.1:7777, uma janela transparente por Tera
 ```
 
-- **Hooks** (`plugin/hooks/hooks.json`): `curl` repassa o JSON cru de cada evento; o app
-  traduz em estados (lendo, digitando, terminal, erro, pedindo atenção, terminou...).
-  Não precisa de Node na máquina do usuário.
-- **MCP**: servido pelo próprio app em `/mcp` (Streamable HTTP, sem estado). A chamada
-  vai pra Tera da sessão que a fez.
-- **Plugin**: `plugin/` + `.claude-plugin/marketplace.json` (este repositório é o marketplace).
-  Valide com `claude plugin validate ./plugin` e `claude plugin validate .`.
+Cada agente tem um **adapter** que traduz os eventos nativos dele pro protocolo do
+Terracota; o core e o renderer não sabem de onde o evento veio. A integração não precisa
+de Node na máquina do usuário (hooks via `curl`), e o MCP é servido pelo próprio app.
 
-```
-src/
-  shared/    protocol.ts (eventos + validação) · ipc.ts · skin.ts · brand.ts (nomes, repo, cores)
-  main/      main.ts (ciclo de vida, bandeja) · menu.ts · manager.ts (roteia eventos entre Teras)
-             entity.ts (janela) · walker.ts (passeio) · sessions.ts · hooks.ts · mcp.ts
-             server.ts · skins.ts · config.ts · paths.ts
-  preload/   preload.ts
-  renderer/  app.ts (estados + mouse) · character.ts (interface) · sprite-character.ts
-             svg-character.ts · wobble.ts (movimento procedural) · pendulum.ts (balanço)
-             look.ts · states.ts · bubble.ts · pet.ts
-assets/      skins/ (Tera) · icons/
-plugin/      plugin do Claude Code
-scripts/     demo.ts · import-skin.ts
-```
-
-### HTTP local
-
-Só aceita `127.0.0.1` sem header `Origin`.
-
-| Rota | Corpo |
-|---|---|
-| `POST /hook` | JSON cru de um hook do Claude Code |
-| `POST /event` | evento pronto — vai pra todas as Teras |
-| `POST /mcp` | MCP Streamable HTTP |
-| `GET /health` | — |
-
-Evento (`/event`): `state` (`idle`, `listening`, `thinking`, `reading`, `searching`, `typing`,
-`terminal`, `web`, `delegating`, `error`, `attention`, `happy`, `sad`, `sleeping`),
-`expression`, `anim`, `say`, `from`, `duration` (ms), `working`.
+- [docs/ARQUITETURA.md](docs/ARQUITETURA.md): camadas, contratos e decisões
+- [docs/INTEGRACOES.md](docs/INTEGRACOES.md): adapters, capabilities e como integrar outro agente
+- [docs/API.md](docs/API.md): API local (`/api/v1/event`)
+- Plugin do Claude Code: `plugin/` + `.claude-plugin/marketplace.json` (este repositório é o
+  marketplace). Valide com `claude plugin validate ./plugin` e `claude plugin validate .`
 
 ### Skins
 

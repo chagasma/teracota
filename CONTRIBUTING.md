@@ -7,6 +7,7 @@ sugerir uma ideia, melhorar o código, desenhar uma skin ou traduzir falas.
 - [Rodando o projeto](#rodando-o-projeto)
 - [Conectando o seu Claude Code ao app em desenvolvimento](#conectando-o-seu-claude-code-ao-app-em-desenvolvimento)
 - [Onde fica cada coisa](#onde-fica-cada-coisa)
+- [Integrando um agente](#integrando-um-agente)
 - [Estilo de código](#estilo-de-código)
 - [Testes](#testes)
 - [Commits e pull requests](#commits-e-pull-requests)
@@ -21,6 +22,7 @@ sugerir uma ideia, melhorar o código, desenhar uma skin ou traduzir falas.
 - **Quer programar?** Procure issues com **`good first issue`** ou algum item do
   roadmap. Pra algo grande, abra uma issue antes pra combinar a abordagem.
 - **Desenha?** Skins novas são muito bem-vindas — veja [Skins](#skins).
+- **Usa outro agente de código?** Veja [Integrando um agente](#integrando-um-agente).
 
 Participando, você concorda com o [Código de Conduta](CODE_OF_CONDUCT.md).
 
@@ -38,6 +40,10 @@ npm start
 
 A Tera aparece no canto da tela e um ícone surge na bandeja do sistema.
 
+Rodando pelo código, o app se chama **"Terracota Dev"**, com configuração própria, e
+convive com o Terracota instalado. Só a porta é a mesma: se o instalado estiver aberto,
+use outra, como `TERRACOTA_PORT=7788 npm start`.
+
 | Comando | O que faz |
 |---|---|
 | `npm start` | Builda e abre o app |
@@ -48,10 +54,11 @@ A Tera aparece no canto da tela e um ícone surge na bandeja do sistema.
 | `npm run pack` | Gera o app desempacotado em `release/win-unpacked` |
 | `npm run dist` | Gera o instalador em `release/` |
 
-Pra testar reações sem o Claude Code, mande eventos direto pro app:
+Pra testar reações sem nenhum agente, mande eventos direto pro app pela
+[API local](docs/API.md):
 
 ```bash
-curl -X POST http://127.0.0.1:7777/event -H "Content-Type: application/json" \
+curl -X POST http://127.0.0.1:7777/api/v1/event -H "Content-Type: application/json" \
   -d '{"state":"happy","say":"Oi!"}'
 ```
 
@@ -71,17 +78,20 @@ Assim, o próprio Claude que te ajuda a programar faz a Tera reagir. 😄
 
 ## Onde fica cada coisa
 
-A visão geral da arquitetura está no [README](README.md#como-funciona). Atalhos:
+A arquitetura completa (camadas, contratos, decisões) está em
+[docs/ARQUITETURA.md](docs/ARQUITETURA.md). Atalhos:
 
 | Quero mudar... | Arquivo |
 |---|---|
-| Como cada ferramenta do Claude vira uma reação | `src/main/hooks.ts` |
+| Como cada ferramenta do Claude vira uma reação | `src/main/integrations/claude-code/adapter.ts` |
+| Integrar outro agente | `src/main/integrations/` (veja [Integrando um agente](#integrando-um-agente)) |
+| API local (`/api/v1/event`) | `src/shared/protocol.ts` (validação) e `src/main/server.ts` |
 | Estados (pose, expressão, ícone, duração) | `src/renderer/states.ts` |
-| Falas da Tera | `src/main/hooks.ts` (eventos) e `src/renderer/app.ts` (cliques, carinho) |
+| Falas da Tera | adapters em `src/main/integrations/` (eventos) e `src/renderer/app.ts` (cliques, carinho) |
 | Movimento contínuo (respirar, quicar) | `src/renderer/wobble.ts` |
 | Balanço ao ser arrastada | `src/renderer/pendulum.ts` |
 | Passeio pela tela | `src/main/walker.ts` |
-| Uma Tera por sessão, roteamento de eventos | `src/main/manager.ts` |
+| Sessões, uma Tera por sessão, roteamento (Companion Core) | `src/main/manager.ts`, `src/main/sessions.ts` |
 | Menu e bandeja | `src/main/menu.ts`, `src/main/main.ts` |
 | Ferramentas MCP (`say`, `emote`) | `src/main/mcp.ts` |
 | Nome, cores, repositório | `src/shared/brand.ts` |
@@ -90,6 +100,25 @@ A visão geral da arquitetura está no [README](README.md#como-funciona). Atalho
 O app tem três partes que conversam por IPC: **main** (Node/Electron: janelas,
 servidor HTTP, sessões), **preload** (a ponte) e **renderer** (a página da Tera).
 O contrato entre elas está em `src/shared/ipc.ts`.
+
+## Integrando um agente
+
+O Terracota é pensado pra funcionar com vários agentes de código por meio de
+**adapters**. Antes de começar, leia [docs/INTEGRACOES.md](docs/INTEGRACOES.md): ele tem
+a arquitetura, o checklist do que o agente precisa oferecer e o passo a passo.
+
+As regras que o CI cobra:
+
+- **Nada específico de um agente fora de `src/main/integrations/<agente>/`.** O core e o
+  renderer só conhecem o protocolo normalizado. Um teste
+  (`src/main/integrations/integrations.test.ts`) falha se isso for quebrado.
+- **Nunca atrapalhar o agente:** o `toSignal` não lança erro, e o lado do agente
+  (plugin/hook) tem timeout curto e falha em silêncio com o app fechado.
+- **Só interfaces oficiais e estáveis**, e nada de anunciar suporte antes de validar o
+  fluxo real.
+
+Sem adapter oficial, dá pra integrar qualquer ferramenta pela [API local](docs/API.md)
+(`/api/v1/event` com `source`), inclusive como protótipo antes de propor um adapter.
 
 ## Estilo de código
 

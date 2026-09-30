@@ -5,6 +5,27 @@ e o projeto segue [versionamento semântico](https://semver.org/lang/pt-BR/).
 
 ## [Não lançado]
 
+### Adicionado
+- **API local v1** (`POST /api/v1/event`, `/event` como alias): eventos com `source`
+  (agente, sessão, projeto) e `lifecycle` entram no fluxo de sessões — qualquer
+  ferramenta ganha Teras próprias no modo "uma por sessão". Documentada em `docs/API.md`
+- Com agentes diferentes abertos, balão e plaquinha mostram "Agente · projeto"
+- "Conectar ao Claude Code" instala o plugin sozinho pela CLI (antes copiava os
+  comandos, que colavam juntos numa linha só)
+- `docs/ARQUITETURA.md`, `docs/INTEGRACOES.md` e `docs/API.md`
+
+### Alterado
+- **Companion Core:** arquitetura de adapters por agente. O Claude Code virou o
+  primeiro adapter (`src/main/integrations/claude-code/`); o core e o renderer não
+  conhecem nenhum agente — um teste garante isso
+- Capabilities por agente: sem aviso de conclusão, o "trabalhando" expira em 1 min
+- Rodando pelo código, o app se chama "Terracota Dev" e não conflita com o instalado
+- Nomes internos: `WaifuEvent` → `CompanionEvent`, `window.waifu` → `window.terracota`
+- Menu: "Abrir ao iniciar o sistema" fora do Windows; sem ícone no Dock do macOS
+
+### Corrigido
+- Nome do projeto com caminhos do Windows quando o app roda em Linux/macOS
+
 ## [0.1.0] — beta
 
 Primeira versão pública.
