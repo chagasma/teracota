@@ -1,5 +1,4 @@
 // Acompanha as sessões do Claude Code que estão mandando eventos.
-import path from 'node:path';
 
 export interface Session {
   id: string;
@@ -14,7 +13,8 @@ export const SESSION_TIMEOUT_MS = 45 * 60 * 1000;
 const WORKING_STALE_MS = 10 * 60 * 1000;
 
 export function projectName(cwd: string | undefined): string {
-  return (cwd && path.basename(cwd.replace(/[\\/]+$/, ''))) || 'claude';
+  // divide nas duas barras: path.basename só entende a do sistema atual
+  return cwd?.split(/[\\/]+/).filter(Boolean).pop() || 'claude';
 }
 
 export class SessionTracker {
