@@ -144,8 +144,9 @@ Pra testar, coloque a pasta em `%APPDATA%/Terracota/skins/<id>/` e escolha no me
 **Skin**. Pacotes no formato `desktop-pet-sprite-pack-v1` podem ser convertidos com
 `npm run import-skin -- <pasta> <id> "<Nome>"`.
 
-**Licença:** só envie arte que você fez ou tem direito de distribuir. Personagens de
-terceiros (anime, jogos, marcas) não entram no repositório.
+**Licença:** a arte do projeto é [CC BY 4.0](LICENSE-ART.md), e skins enviadas ao repositório
+entram na mesma licença, com o seu crédito. Só envie arte que você fez ou tem direito de
+distribuir — personagens de terceiros (anime, jogos, marcas) não entram no repositório.
 
 ## Lançando uma versão (mantenedores)
 

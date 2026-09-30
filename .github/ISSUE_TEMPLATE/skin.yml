@@ -15,7 +15,7 @@ body:
       label: Licença da arte
       description: Só aceitamos arte que você fez ou tem direito de distribuir.
       options:
-        - Fiz eu — libero sob a mesma licença da arte do projeto
+        - Fiz eu — libero sob CC BY 4.0 (a licença da arte do projeto)
         - Fiz eu — outra licença (explico abaixo)
         - Gerada por IA sob minha direção
         - Ainda não sei

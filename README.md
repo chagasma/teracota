@@ -165,4 +165,4 @@ npm run import-skin -- <pasta-do-pacote> <id> "<Nome>"
 
 Código: [MIT](LICENSE).
 
-Arte da Tera (`assets/`): licença a definir antes do lançamento.
+Arte da Tera (`assets/`): [CC BY 4.0](LICENSE-ART.md) — use à vontade, com crédito.
