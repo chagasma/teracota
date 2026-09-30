@@ -1,7 +1,7 @@
 import { contextBridge, ipcRenderer } from 'electron';
-import { IPC, type WaifuApi } from '../shared/ipc';
+import { IPC, type CompanionApi } from '../shared/ipc';
 
-const api: WaifuApi = {
+const api: CompanionApi = {
   getSkin: () => ipcRenderer.invoke(IPC.getSkin),
   onEvent: (cb) => { ipcRenderer.on(IPC.event, (_e, event) => cb(event)); },
   onWalk: (cb) => { ipcRenderer.on(IPC.walk, (_e, info) => cb(info)); },
@@ -16,4 +16,4 @@ const api: WaifuApi = {
   setWalkAllowed: (allowed) => ipcRenderer.send(IPC.walkAllowed, allowed),
 };
 
-contextBridge.exposeInMainWorld('waifu', api);
+contextBridge.exposeInMainWorld('terracota', api);

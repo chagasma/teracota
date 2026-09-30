@@ -1,19 +1,20 @@
-// Decide qual waifu recebe cada evento, conforme o modo:
-// - single: uma waifu só; agrega o estado de todas as sessões
-// - multi:  uma waifu por sessão; a primeira ("de casa") nunca vai embora
+// Decide qual Tera recebe cada evento, conforme o modo:
+// - single: uma Tera só; agrega o estado de todas as sessões
+// - multi:  uma Tera por sessão; a primeira ("de casa") nunca vai embora
 import type { WebContents } from 'electron';
 import { screen } from 'electron';
 import { CHARACTER_NAME, ENTITY_COLORS } from '../shared/brand';
 import type { EntityMode, Identity, MoveMode, Point } from '../shared/ipc';
-import type { WaifuEvent } from '../shared/protocol';
+import type { CompanionEvent, IncomingEvent } from '../shared/protocol';
 import { saveConfig, type Config } from './config';
 import { Entity, SIZE, cornerPosition, isOnScreen } from './entity';
-import { WAIFU_TOOL_PREFIX, translateHook, type HookInput } from './hooks';
-import { SessionTracker, projectName } from './sessions';
+import { providerInfo } from './integrations';
+import type { AgentSignal } from './integrations/types';
+import { SessionTracker, sessionKey, type Session } from './sessions';
 
 export const MAX_ENTITIES = 5;
 const PRUNE_EVERY_MS = 30_000;
-/** Janela pra casar a chamada MCP com o PreToolUse que a precedeu */
+/** Janela pra casar a chamada MCP com o sinal `mcpCall` que a precedeu */
 const MCP_MATCH_MS = 5000;
 
 const HOME_IDENTITY: Identity = { label: null, color: ENTITY_COLORS[0] };
@@ -21,7 +22,7 @@ const HOME_IDENTITY: Identity = { label: null, color: ENTITY_COLORS[0] };
 export class EntityManager {
   private entities: Entity[] = [];
   private readonly sessions = new SessionTracker();
-  private pendingMcp: { sessionId: string; at: number } | null = null;
+  private pendingMcp: { key: string; at: number } | null = null;
 
   constructor(private config: Config) {
     setInterval(() => this.prune(), PRUNE_EVERY_MS);
@@ -69,39 +70,51 @@ export class EntityManager {
 
   // ---------- entrada de eventos ----------
 
-  handleHook(input: HookInput): void {
-    const name = input.hook_event_name;
-    const id = input.session_id ?? 'default';
-    const project = projectName(input.cwd);
-    const session = this.sessions.touch(id, project);
+  /** Sinal normalizado de um adapter de agente (ou da API local com source) */
+  handleSignal(signal: AgentSignal): void {
+    const { provider, sessionId, project } = signal.source;
+    const key = sessionKey(provider, sessionId);
+    const { capabilities } = providerInfo(provider);
+    const providersBefore = this.sessions.providerCount();
+    const session = this.sessions.touch(key, { provider, project, reportsCompletion: capabilities.completion });
+    if (this.sessions.providerCount() !== providersBefore) this.refreshLabels();
 
-    if (name === 'UserPromptSubmit' || name === 'PreToolUse') session.working = true;
-    if (name === 'Stop' || name === 'SessionEnd') session.working = false;
-    if (name === 'PreToolUse' && input.tool_name?.startsWith(WAIFU_TOOL_PREFIX)) {
-      this.pendingMcp = { sessionId: id, at: Date.now() };
+    if (signal.working !== undefined) session.working = signal.working;
+    if (signal.mcpCall) this.pendingMcp = { key, at: Date.now() };
+    const label = this.labelFor(session);
+    if (signal.lifecycle === 'end') {
+      this.sessions.remove(key);
+      if (this.sessions.providerCount() !== providersBefore) this.refreshLabels();
     }
-    if (name === 'SessionEnd') this.sessions.remove(id);
 
-    const event = translateHook(input);
-    if (this.mode === 'single') this.routeSingle(name, project, event);
-    else this.routeMulti(name, id, project, event);
+    if (this.mode === 'single') this.routeSingle(signal, label);
+    else this.routeMulti(signal, key, label);
   }
 
-  /** Evento genérico (POST /event, demo): sem sessão, vai pra todas */
-  handleEvent(event: WaifuEvent): void {
-    this.broadcast(event);
+  /** Evento da API local: com source entra no fluxo de sessões; sem, vai pra todas */
+  handleEvent({ event, source, lifecycle }: IncomingEvent): void {
+    if (source) {
+      this.handleSignal({
+        source: { provider: source.provider, sessionId: source.sessionId ?? 'default', project: source.project ?? source.provider },
+        lifecycle,
+        working: event?.working,
+        event,
+      });
+      return;
+    }
+    if (event) this.broadcast(event);
   }
 
-  /** Evento vindo do MCP: vai pra waifu da sessão que chamou a ferramenta */
-  handleMcp(event: WaifuEvent): void {
+  /** Evento vindo do MCP: vai pra Tera da sessão que chamou a ferramenta */
+  handleMcp(event: CompanionEvent): void {
     const pending = this.pendingMcp && Date.now() - this.pendingMcp.at < MCP_MATCH_MS ? this.pendingMcp : null;
     this.pendingMcp = null;
-    const sessionId = pending?.sessionId ?? this.sessions.list()[0]?.id;
-    const target = (sessionId && this.entityFor(sessionId)) || this.entities[0];
+    const key = pending?.key ?? this.sessions.list()[0]?.key;
+    const target = (key && this.entityFor(key)) || this.entities[0];
     target?.send(event);
   }
 
-  broadcast(event: WaifuEvent): void {
+  broadcast(event: CompanionEvent): void {
     for (const e of this.entities) e.send(event);
   }
 
@@ -116,7 +129,7 @@ export class EntityManager {
     this.spawnHome();
     for (const e of old) e.destroy();
     if (mode === 'multi') {
-      for (const s of this.sessions.list().slice(0, MAX_ENTITIES)) this.assign(s.id, s.project);
+      for (const s of this.sessions.list().slice(0, MAX_ENTITIES)) this.assign(s.key, this.labelFor(s));
       this.broadcast({ state: 'happy', say: 'Uma pra cada sessão! 👯' });
     } else {
       this.entities[0]?.send({ state: 'happy', working: this.sessions.anyWorking(), say: 'Deixa comigo, cuido de tudo!' });
@@ -127,7 +140,7 @@ export class EntityManager {
     return this.config.skin;
   }
 
-  /** Troca a skin de todas as waifus (recarrega as janelas) */
+  /** Troca a skin de todas as Teras (recarrega as janelas) */
   setSkin(id: string): void {
     this.updateConfig({ skin: id });
     for (const e of this.entities) e.win.reload();
@@ -140,36 +153,52 @@ export class EntityManager {
 
   // ---------- roteamento ----------
 
-  private routeSingle(name: string | undefined, project: string, event: WaifuEvent | null): void {
+  /** Etiqueta da sessão: o projeto, ou "Agente · projeto" quando há agentes diferentes abertos */
+  private labelFor(session: Session): string {
+    return this.sessions.providerCount() > 1
+      ? `${providerInfo(session.provider).displayName} · ${session.project}`
+      : session.project;
+  }
+
+  /** Entrou ou saiu um agente diferente: as plaquinhas ganham/perdem o nome do agente */
+  private refreshLabels(): void {
+    for (const e of this.entities) {
+      const session = e.sessionId ? this.sessions.get(e.sessionId) : undefined;
+      if (session) e.setIdentity(e.sessionId, { ...e.identity, label: this.labelFor(session) });
+    }
+  }
+
+  private routeSingle(signal: AgentSignal, label: string): void {
     const home = this.entities[0];
+    const event = signal.event && { ...signal.event };
     if (!home || !event) return;
     event.working = this.sessions.anyWorking();
-    if (name === 'SessionEnd' && this.sessions.size > 0) {
+    if (signal.lifecycle === 'end' && this.sessions.size > 0) {
       // ainda há outras sessões: só se despede daquela, sem dormir
-      home.send({ say: 'Tchau! 👋', from: project, working: event.working });
+      home.send({ say: 'Tchau! 👋', from: label, working: event.working });
       return;
     }
-    if (this.sessions.size > 1 && event.say) event.from = project;
+    if (this.sessions.size > 1 && event.say) event.from = label;
     home.send(event);
   }
 
-  private routeMulti(name: string | undefined, id: string, project: string, event: WaifuEvent | null): void {
-    let entity = this.entityFor(id);
-    if (name === 'SessionEnd') {
+  private routeMulti(signal: AgentSignal, key: string, label: string): void {
+    let entity = this.entityFor(key);
+    if (signal.lifecycle === 'end') {
       if (entity) this.release(entity);
       return;
     }
-    entity ??= this.assign(id, project) ?? undefined;
+    entity ??= this.assign(key, label) ?? undefined;
     if (!entity) return;
-    if (entity.identity.label !== project) entity.setIdentity(id, { ...entity.identity, label: project });
-    if (event) entity.send(event);
+    if (entity.identity.label !== label) entity.setIdentity(key, { ...entity.identity, label });
+    if (signal.event) entity.send(signal.event);
   }
 
   private entityFor(sessionId: string): Entity | undefined {
     return this.entities.find((e) => e.sessionId === sessionId);
   }
 
-  /** Dá uma waifu pra sessão: reaproveita a de casa se estiver livre, senão cria outra */
+  /** Dá uma Tera pra sessão: reaproveita a de casa se estiver livre, senão cria outra */
   private assign(sessionId: string, project: string): Entity | null {
     const free = this.entities.find((e) => e.sessionId === null);
     if (free) {
@@ -184,7 +213,7 @@ export class EntityManager {
     return entity;
   }
 
-  /** Sessão acabou: a última waifu volta a ser "de casa"; as outras vão embora */
+  /** Sessão acabou: a última Tera volta a ser "de casa"; as outras vão embora */
   private release(entity: Entity): void {
     if (this.entities.length === 1) {
       entity.setIdentity(null, HOME_IDENTITY);
@@ -202,6 +231,7 @@ export class EntityManager {
         const e = this.entityFor(id);
         if (e) this.release(e);
       }
+      if (removed.length) this.refreshLabels();
     } else if (workingChanged) {
       this.entities[0]?.send({ working: this.sessions.anyWorking() });
     }
@@ -221,7 +251,7 @@ export class EntityManager {
       identity,
       visible: this.visible,
       moveMode: this.moveMode,
-      // só a primeira waifu lembra a posição entre execuções
+      // só a primeira Tera lembra a posição entre execuções
       onSettle: persist ? ({ x, y }) => this.updateConfig({ x, y }) : undefined,
     });
     entity.win.on('closed', () => { this.entities = this.entities.filter((e) => e !== entity); });
@@ -229,7 +259,7 @@ export class EntityManager {
     return entity;
   }
 
-  /** Um lugar no rodapé da tela longe das outras waifus */
+  /** Um lugar no rodapé da tela longe das outras Teras */
   private freeSpot(): Point {
     const area = screen.getPrimaryDisplay().workArea;
     const y = area.y + area.height - SIZE.height;

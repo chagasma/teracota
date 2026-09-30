@@ -1,26 +1,26 @@
 // Contrato de IPC entre o processo principal e o renderer (via preload).
-import type { WaifuEvent } from './protocol';
+import type { CompanionEvent } from './protocol';
 import type { SkinInfo } from './skin';
 
 export const IPC = {
-  event: 'waifu:event',
-  walk: 'waifu:walk',
-  cursor: 'waifu:cursor',
-  mode: 'waifu:mode',
-  identity: 'waifu:identity',
-  leave: 'waifu:leave',
-  setIgnoreMouse: 'waifu:set-ignore-mouse',
-  contextMenu: 'waifu:context-menu',
-  moveBy: 'waifu:move-by',
-  dragEnd: 'waifu:drag-end',
-  walkAllowed: 'waifu:walk-allowed',
-  getSkin: 'waifu:get-skin',
+  event: 'terracota:event',
+  walk: 'terracota:walk',
+  cursor: 'terracota:cursor',
+  mode: 'terracota:mode',
+  identity: 'terracota:identity',
+  leave: 'terracota:leave',
+  setIgnoreMouse: 'terracota:set-ignore-mouse',
+  contextMenu: 'terracota:context-menu',
+  moveBy: 'terracota:move-by',
+  dragEnd: 'terracota:drag-end',
+  walkAllowed: 'terracota:walk-allowed',
+  getSkin: 'terracota:get-skin',
 } as const;
 
 /** roam = passeia pela tela; stay = fica parado onde foi deixado */
 export type MoveMode = 'roam' | 'stay';
 
-/** single = uma waifu pra todas as sessões; multi = uma por sessão do Claude */
+/** single = uma Tera pra todas as sessões; multi = uma por sessão de agente */
 export type EntityMode = 'single' | 'multi';
 
 export interface WalkInfo {
@@ -46,10 +46,10 @@ export interface Point {
   y: number;
 }
 
-export interface WaifuApi {
+export interface CompanionApi {
   /** Skin atual (null = personagem SVG) */
   getSkin(): Promise<SkinInfo | null>;
-  onEvent(cb: (event: WaifuEvent) => void): void;
+  onEvent(cb: (event: CompanionEvent) => void): void;
   onWalk(cb: (info: WalkInfo) => void): void;
   /** Posição do cursor relativa à janela */
   onCursor(cb: (p: Point) => void): void;
@@ -66,6 +66,6 @@ export interface WaifuApi {
 
 declare global {
   interface Window {
-    waifu?: WaifuApi;
+    terracota?: CompanionApi;
   }
 }

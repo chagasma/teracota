@@ -1,5 +1,39 @@
 import { describe, expect, it } from 'vitest';
-import { parseEvent } from './protocol';
+import { parseEvent, parseIncoming, parseSource } from './protocol';
+
+describe('parseSource', () => {
+  it('aceita provider em formato slug, sessão e projeto', () => {
+    expect(parseSource({ provider: 'Meu-Agente', sessionId: ' s1 ', project: 'hera' }))
+      .toEqual({ provider: 'meu-agente', sessionId: 's1', project: 'hera' });
+  });
+
+  it('rejeita provider inválido', () => {
+    expect(parseSource({ provider: 'com espaço' })).toBeUndefined();
+    expect(parseSource({ provider: '' })).toBeUndefined();
+    expect(parseSource({ provider: 'x'.repeat(41) })).toBeUndefined();
+    expect(parseSource('claude')).toBeUndefined();
+  });
+});
+
+describe('parseIncoming', () => {
+  it('evento simples (sem origem) continua funcionando', () => {
+    expect(parseIncoming({ state: 'happy', say: 'oi' })).toEqual({ event: { state: 'happy', say: 'oi' } });
+  });
+
+  it('evento com origem e ciclo de vida', () => {
+    expect(parseIncoming({ state: 'typing', working: true, source: { provider: 'meu-agente', sessionId: 'a', project: 'hera' }, lifecycle: 'start' }))
+      .toEqual({ event: { state: 'typing', working: true }, source: { provider: 'meu-agente', sessionId: 'a', project: 'hera' }, lifecycle: 'start' });
+  });
+
+  it('só ciclo de vida, sem visual, vale quando tem origem', () => {
+    expect(parseIncoming({ source: { provider: 'x' }, lifecycle: 'end' })).toEqual({ event: null, source: { provider: 'x' }, lifecycle: 'end' });
+    expect(parseIncoming({ lifecycle: 'end' })).toBeNull();
+  });
+
+  it('origem inválida é ignorada, não derruba o evento', () => {
+    expect(parseIncoming({ state: 'idle', source: { provider: '???' } })).toEqual({ event: { state: 'idle' } });
+  });
+});
 
 describe('parseEvent', () => {
   it('aceita um evento completo', () => {

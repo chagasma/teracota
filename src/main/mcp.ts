@@ -6,11 +6,11 @@ import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/
 import type { IncomingMessage, ServerResponse } from 'node:http';
 import { z } from 'zod';
 import { CHARACTER_NAME, MCP_SERVER_NAME } from '../shared/brand';
-import { ANIMS, EXPRESSIONS, type WaifuEvent } from '../shared/protocol';
+import { ANIMS, EXPRESSIONS, type CompanionEvent } from '../shared/protocol';
 
 const ok = { content: [{ type: 'text' as const, text: 'ok' }] };
 
-function buildServer(dispatch: (event: WaifuEvent) => void): McpServer {
+function buildServer(dispatch: (event: CompanionEvent) => void): McpServer {
   const server = new McpServer(
     { name: MCP_SERVER_NAME, version: app.getVersion() },
     {
@@ -61,7 +61,7 @@ export async function handleMcpRequest(
   req: IncomingMessage,
   res: ServerResponse,
   body: unknown,
-  dispatch: (event: WaifuEvent) => void,
+  dispatch: (event: CompanionEvent) => void,
 ): Promise<void> {
   const server = buildServer(dispatch);
   const transport = new StreamableHTTPServerTransport({ sessionIdGenerator: undefined, enableJsonResponse: true });

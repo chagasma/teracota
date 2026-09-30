@@ -1,6 +1,6 @@
 // Cérebro do personagem: estados vindos do Claude, passeio e interação com o mouse.
 import type { Identity, ModeInfo, Point, WalkInfo } from '../shared/ipc';
-import type { Anim, Expression, StateName, WaifuEvent } from '../shared/protocol';
+import type { Anim, Expression, StateName, CompanionEvent } from '../shared/protocol';
 import type { Pose } from '../shared/skin';
 import { Bubble } from './bubble';
 import type { Character } from './character';
@@ -22,7 +22,7 @@ interface Reaction {
 const DRAG_THRESHOLD = 4;
 const pick = <T>(list: readonly T[]): T => list[Math.floor(Math.random() * list.length)]!;
 
-const api = window.waifu;
+const api = window.terracota;
 const characterEl = document.getElementById('character')!;
 const bubble = new Bubble(
   document.getElementById('bubble')!,
@@ -48,7 +48,7 @@ const baseState = (): StateName => (working ? 'thinking' : 'idle');
 
 // ---------- estados ----------
 
-function setState(name: StateName, opts: Pick<WaifuEvent, 'expression' | 'anim' | 'duration'> = {}): void {
+function setState(name: StateName, opts: Pick<CompanionEvent, 'expression' | 'anim' | 'duration'> = {}): void {
   const def = STATE_DEFS[name];
   current = name;
   const expression = opts.expression ?? def.expression;
@@ -89,7 +89,7 @@ function say(text: string, from?: string): void {
   talkTimer = window.setTimeout(() => character.setTalking(false), typing + 300);
 }
 
-function handleEvent(ev: WaifuEvent): void {
+function handleEvent(ev: CompanionEvent): void {
   if (ev.working !== undefined) working = ev.working;
   if (ev.state) setState(ev.state, ev);
   else if (ev.expression || ev.anim) react({ expression: ev.expression, anim: ev.anim, duration: ev.duration });

@@ -38,6 +38,10 @@ function createTray(): void {
   tray.on('right-click', () => tray?.popUpContextMenu(buildMenu(manager)));
 }
 
+// Em desenvolvimento, nome próprio: config e trava de instância separadas do app
+// instalado, pra dar pra rodar os dois (use TERRACOTA_PORT pra mudar a porta).
+if (!app.isPackaged) app.setName(`${APP_NAME} Dev`);
+
 // Só uma cópia do app (a porta é uma só)
 if (!app.requestSingleInstanceLock()) {
   app.quit();
@@ -55,8 +59,8 @@ if (!app.requestSingleInstanceLock()) {
     manager.start();
     createTray();
     startEventServer(getPort(), {
-      onHook: (input) => manager.handleHook(input),
-      onEvent: (event) => manager.handleEvent(event),
+      onSignal: (signal) => manager.handleSignal(signal),
+      onEvent: (incoming) => manager.handleEvent(incoming),
       onMcp: (event) => manager.handleMcp(event),
     });
   });

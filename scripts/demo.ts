@@ -1,7 +1,7 @@
 // Percorre todos os estados do personagem (com o app aberto): npm run demo
-import { getPort, type WaifuEvent } from '../src/shared/protocol';
+import { getPort, type CompanionEvent } from '../src/shared/protocol';
 
-const steps: WaifuEvent[] = [
+const steps: CompanionEvent[] = [
   { state: 'listening', working: true, say: 'Hm? Nova tarefa!' },
   { state: 'reading' }, { state: 'searching' }, { state: 'thinking' },
   { state: 'typing' }, { state: 'terminal' }, { state: 'web' }, { state: 'delegating' },

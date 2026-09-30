@@ -1,4 +1,4 @@
-// Preferências persistidas: modos e última posição da waifu principal.
+// Preferências persistidas: modos e última posição da Tera principal.
 import { app } from 'electron';
 import fs from 'node:fs';
 import path from 'node:path';

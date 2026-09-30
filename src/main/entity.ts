@@ -1,9 +1,9 @@
-// Uma entidade = uma waifu na tela: janela transparente + passeio + ponte de IPC.
+// Uma entidade = uma Tera na tela: janela transparente + passeio + ponte de IPC.
 import { BrowserWindow, screen } from 'electron';
 import path from 'node:path';
 import { CHARACTER_NAME } from '../shared/brand';
 import { IPC, type Identity, type MoveMode, type Point } from '../shared/ipc';
-import type { WaifuEvent } from '../shared/protocol';
+import type { CompanionEvent } from '../shared/protocol';
 import { Walker } from './walker';
 
 export const SIZE = { width: 320, height: 440 };
@@ -115,7 +115,7 @@ export class Entity {
     return { x, y };
   }
 
-  send(event: WaifuEvent): void {
+  send(event: CompanionEvent): void {
     this.post(IPC.event, event);
   }
 

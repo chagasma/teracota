@@ -1,4 +1,5 @@
-// Protocolo de eventos do personagem — compartilhado entre app, hooks e MCP.
+// Protocolo normalizado do Terracota. Toda integração (adapters de agentes, MCP,
+// API local) termina num CompanionEvent — o renderer não sabe de onde ele veio.
 
 export const DEFAULT_PORT = 7777;
 
@@ -14,8 +15,9 @@ export const STATES = [
 ] as const;
 export type StateName = (typeof STATES)[number];
 
-export interface WaifuEvent {
-  /** Atividade — define expressão/animação/ícone padrão */
+/** O que a Tera deve mostrar. Não carrega nada específico de nenhum agente. */
+export interface CompanionEvent {
+  /** Atividade — define pose/expressão/animação/ícone padrão */
   state?: StateName;
   /** Sobrescreve a expressão do estado (ou reação passageira, se não houver state) */
   expression?: Expression;
@@ -25,10 +27,27 @@ export interface WaifuEvent {
   say?: string;
   /** ms até voltar ao estado base */
   duration?: number;
-  /** Claude está no meio de uma tarefa (entre o prompt e o Stop) */
+  /** O agente está no meio de uma tarefa */
   working?: boolean;
-  /** Projeto de origem — aparece no balão quando há várias sessões numa waifu só */
+  /** Etiqueta de origem no balão (ex.: "front" ou "Meu Agente · hera") — montada pelo core */
   from?: string;
+}
+
+/** De onde vem um evento: qual agente, qual sessão, qual projeto */
+export interface EventSource {
+  /** Identificador do agente/ferramenta em formato slug, ex.: "meu-agente" */
+  provider: string;
+  sessionId?: string;
+  project?: string;
+}
+
+/** Evento recebido pela API local (`/api/v1/event`): o visual + origem e ciclo de vida opcionais */
+export interface IncomingEvent {
+  event: CompanionEvent | null;
+  /** Com source, o evento entra no fluxo de sessões (e ganha uma Tera própria no modo "uma por sessão") */
+  source?: EventSource;
+  /** Começo/fim da sessão (só faz sentido com source) */
+  lifecycle?: 'start' | 'end';
 }
 
 export function getPort(): number {
@@ -39,11 +58,39 @@ function isOneOf<T extends string>(list: readonly T[], value: unknown): value is
   return typeof value === 'string' && (list as readonly string[]).includes(value);
 }
 
-/** Valida um evento vindo de fora (HTTP); descarta campos inválidos. */
-export function parseEvent(input: unknown): WaifuEvent | null {
+const SLUG = /^[a-z0-9][a-z0-9._-]{0,39}$/;
+
+function cleanText(value: unknown, max: number): string | undefined {
+  return typeof value === 'string' && value.trim() ? value.trim().slice(0, max) : undefined;
+}
+
+/** Valida a origem: provider em formato slug; sessão e projeto como texto curto */
+export function parseSource(input: unknown): EventSource | undefined {
+  if (!input || typeof input !== 'object') return undefined;
+  const o = input as Record<string, unknown>;
+  const provider = typeof o.provider === 'string' ? o.provider.trim().toLowerCase() : '';
+  if (!SLUG.test(provider)) return undefined;
+  const sessionId = cleanText(o.sessionId, 200);
+  const project = cleanText(o.project, 60);
+  return { provider, ...(sessionId && { sessionId }), ...(project && { project }) };
+}
+
+/** Valida uma requisição da API local: evento + origem/ciclo de vida opcionais */
+export function parseIncoming(input: unknown): IncomingEvent | null {
   if (!input || typeof input !== 'object') return null;
   const o = input as Record<string, unknown>;
-  const ev: WaifuEvent = {};
+  const event = parseEvent(input);
+  const source = parseSource(o.source);
+  const lifecycle = source && (o.lifecycle === 'start' || o.lifecycle === 'end') ? o.lifecycle : undefined;
+  if (!event && !lifecycle) return null;
+  return { event, ...(source && { source }), ...(lifecycle && { lifecycle }) };
+}
+
+/** Valida um evento vindo de fora (HTTP); descarta campos inválidos. */
+export function parseEvent(input: unknown): CompanionEvent | null {
+  if (!input || typeof input !== 'object') return null;
+  const o = input as Record<string, unknown>;
+  const ev: CompanionEvent = {};
   if (isOneOf(STATES, o.state)) ev.state = o.state;
   if (isOneOf(EXPRESSIONS, o.expression)) ev.expression = o.expression;
   if (isOneOf(ANIMS, o.anim)) ev.anim = o.anim;

@@ -1,20 +1,25 @@
 // Servidor HTTP local (só 127.0.0.1):
-//   POST /hook   JSON cru do hook do Claude Code (enviado por curl)
-//   POST /event  evento do personagem já pronto (demo, integrações)
-//   POST /mcp    servidor MCP (Streamable HTTP)
+//   POST <rotas dos adapters>   eventos nativos de cada agente (ex.: /hook do Claude Code)
+//   POST /api/v1/event          API local universal (CompanionEvent + source opcional)
+//   POST /event                 alias compatível da API acima
+//   POST /mcp                   servidor MCP (Streamable HTTP)
 //   GET  /health
+// Documentação da API: docs/API.md
 import http from 'node:http';
-import { parseEvent, type WaifuEvent } from '../shared/protocol';
-import { parseHookInput, type HookInput } from './hooks';
+import { parseIncoming, type CompanionEvent, type IncomingEvent } from '../shared/protocol';
+import { ADAPTERS, adapterForRoute } from './integrations';
+import type { AgentSignal } from './integrations/types';
 import { handleMcpRequest } from './mcp';
 
-/** Hooks podem trazer payloads grandes (ex.: conteúdo de ferramentas) */
+/** Eventos de agentes podem trazer payloads grandes (ex.: conteúdo de ferramentas) */
 const MAX_BODY = 8 * 1024 * 1024;
 
+const EVENT_ROUTES = ['/api/v1/event', '/event'];
+
 export interface ServerHandlers {
-  onHook(input: HookInput): void;
-  onEvent(event: WaifuEvent): void;
-  onMcp(event: WaifuEvent): void;
+  onSignal(signal: AgentSignal): void;
+  onEvent(incoming: IncomingEvent): void;
+  onMcp(event: CompanionEvent): void;
 }
 
 function readJson(req: http.IncomingMessage): Promise<unknown> {
@@ -43,7 +48,7 @@ function readJson(req: http.IncomingMessage): Promise<unknown> {
 
 /**
  * Bloqueia páginas web: navegadores mandam Origin em POST cross-origin, e um Host
- * diferente de localhost indica DNS rebinding. curl e o Claude Code não fazem nenhum dos dois.
+ * diferente de localhost indica DNS rebinding. curl e os agentes não fazem nenhum dos dois.
  */
 function isLocalClient(req: http.IncomingMessage, port: number): boolean {
   if (req.headers.origin) return false;
@@ -51,9 +56,11 @@ function isLocalClient(req: http.IncomingMessage, port: number): boolean {
   return host === `127.0.0.1:${port}` || host === `localhost:${port}`;
 }
 
+const knownRoute = (url: string) => url === '/mcp' || EVENT_ROUTES.includes(url) || !!adapterForRoute(url);
+
 export function startEventServer(port: number, handlers: ServerHandlers): http.Server {
   const server = http.createServer(async (req, res) => {
-    const url = (req.url ?? '').split('?')[0];
+    const url = (req.url ?? '').split('?')[0] ?? '';
 
     if (!isLocalClient(req, port)) {
       res.writeHead(403).end();
@@ -70,7 +77,7 @@ export function startEventServer(port: number, handlers: ServerHandlers): http.S
       );
       return;
     }
-    if (req.method !== 'POST' || !['/hook', '/event', '/mcp'].includes(url ?? '')) {
+    if (req.method !== 'POST' || !knownRoute(url)) {
       res.writeHead(404).end();
       return;
     }
@@ -79,7 +86,8 @@ export function startEventServer(port: number, handlers: ServerHandlers): http.S
     try {
       body = await readJson(req);
     } catch {
-      if (!res.headersSent) res.writeHead(400).end('invalid json');
+      // eventos nativos de agentes nunca recebem erro: não podem atrapalhar o agente
+      if (!res.headersSent) res.writeHead(adapterForRoute(url) ? 204 : 400).end();
       return;
     }
 
@@ -93,22 +101,29 @@ export function startEventServer(port: number, handlers: ServerHandlers): http.S
       return;
     }
 
-    if (url === '/hook') {
-      const input = parseHookInput(body);
-      if (input) handlers.onHook(input);
-      res.writeHead(204).end(); // hook nunca recebe erro: não pode atrapalhar o Claude
+    const adapter = adapterForRoute(url);
+    if (adapter) {
+      try {
+        const signal = adapter.toSignal(body);
+        if (signal) handlers.onSignal(signal);
+      } catch (err) {
+        console.error(`[terracota] adapter ${adapter.id} falhou:`, err);
+      }
+      res.writeHead(204).end();
       return;
     }
 
-    const event = parseEvent(body);
-    if (!event) {
+    const incoming = parseIncoming(body);
+    if (!incoming) {
       res.writeHead(400).end('invalid event');
       return;
     }
-    handlers.onEvent(event);
+    handlers.onEvent(incoming);
     res.writeHead(204).end();
   });
   server.on('error', (err) => console.error(`[terracota] servidor na porta ${port} falhou:`, err.message));
-  server.listen(port, '127.0.0.1', () => console.log(`[terracota] ouvindo em http://127.0.0.1:${port}`));
+  server.listen(port, '127.0.0.1', () => {
+    console.log(`[terracota] ouvindo em http://127.0.0.1:${port} — integrações: ${ADAPTERS.map((a) => a.id).join(', ')}`);
+  });
   return server;
 }

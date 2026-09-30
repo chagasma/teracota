@@ -1,7 +1,11 @@
-// "Conectar ao Claude Code": instala o plugin rodando a CLI do Claude por você.
+// Adapter do Claude Code — "Conectar ao Claude Code": instala o plugin rodando a CLI do Claude por você.
 // Se a CLI não estiver no PATH, devolve um comando de uma linha pra colar no terminal.
 import { execFile } from 'node:child_process';
-import { GITHUB_REPO, PLUGIN_ID } from '../shared/brand';
+import { GITHUB_REPO } from '../../../shared/brand';
+import type { ConnectResult } from '../types';
+
+/** Plugin no formato nome@marketplace */
+export const PLUGIN_ID = 'terracota@terracota';
 
 const STEPS: string[][] = [
   ['plugin', 'marketplace', 'add', GITHUB_REPO],
@@ -10,8 +14,6 @@ const STEPS: string[][] = [
 
 /** Uma linha só, que funciona no PowerShell, bash e zsh (o `;` roda um depois do outro) */
 export const TERMINAL_COMMAND = STEPS.map((args) => `claude ${args.join(' ')}`).join('; ');
-
-export type ConnectResult = { ok: true } | { ok: false; reason: 'not-found' | 'failed'; output: string };
 
 interface RunResult {
   ok: boolean;
