@@ -6,7 +6,7 @@ export const CHARACTER_NAME = 'Tera';
 export const MCP_SERVER_NAME = 'terracota';
 
 /** Repositório no GitHub (marketplace do plugin e downloads) */
-export const GITHUB_REPO = 'OWNER/terracota'; // TODO: definir o usuário/organização
+export const GITHUB_REPO = 'kyotodevIndie/tera-agent-companion';
 
 /** Comandos pra instalar o plugin no Claude Code */
 export const PLUGIN_INSTALL_COMMANDS = [

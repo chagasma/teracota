@@ -74,10 +74,10 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/OWNER/terracota.git"
+    "url": "https://github.com/kyotodevIndie/tera-agent-companion.git"
   },
   "bugs": {
-    "url": "https://github.com/OWNER/terracota/issues"
+    "url": "https://github.com/kyotodevIndie/tera-agent-companion/issues"
   },
-  "homepage": "https://github.com/OWNER/terracota#readme"
+  "homepage": "https://github.com/kyotodevIndie/tera-agent-companion#readme"
 }

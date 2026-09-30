@@ -1,6 +1,6 @@
 # Terracota
 
-[![CI](https://github.com/OWNER/terracota/actions/workflows/ci.yml/badge.svg)](https://github.com/OWNER/terracota/actions/workflows/ci.yml)
+[![CI](https://github.com/kyotodevIndie/tera-agent-companion/actions/workflows/ci.yml/badge.svg)](https://github.com/kyotodevIndie/tera-agent-companion/actions/workflows/ci.yml)
 
 **Tera** é uma gatinha que mora no seu desktop e acompanha o seu trabalho no
 [Claude Code](https://claude.com/claude-code): senta no notebook quando o Claude
@@ -14,12 +14,12 @@ comemora quando termina — e passeia pela tela quando está tudo calmo.
 ## Instalar
 
 1. Baixe o instalador (`Terracota Setup x.y.z.exe`) na página de
-   [Releases](https://github.com/OWNER/terracota/releases) e rode.
+   [Releases](https://github.com/kyotodevIndie/tera-agent-companion/releases) e rode.
    O Windows pode mostrar o aviso do SmartScreen (o app ainda não é assinado):
    **Mais informações → Executar assim mesmo**.
 2. Conecte ao Claude Code — no Claude Code, rode:
    ```
-   /plugin marketplace add OWNER/terracota
+   /plugin marketplace add kyotodevIndie/tera-agent-companion
    /plugin install terracota@terracota
    ```
    (ou clique com o botão direito na Tera → **Conectar ao Claude Code**, que copia esses comandos.)

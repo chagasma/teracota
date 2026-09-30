@@ -30,8 +30,8 @@ Precisa de **Node.js 22+** e **Windows** (é a plataforma suportada por enquanto
 macOS e Linux estão no roadmap — ajuda bem-vinda).
 
 ```bash
-git clone https://github.com/OWNER/terracota.git
-cd terracota
+git clone https://github.com/kyotodevIndie/tera-agent-companion.git
+cd tera-agent-companion
 npm install
 npm start
 ```

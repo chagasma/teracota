@@ -14,7 +14,7 @@ do Claude Code (hooks) e servir o MCP. Por projeto:
 ## Reportando uma falha
 
 **Não abra issue pública.** Use o
-[relato privado de vulnerabilidade](https://github.com/OWNER/terracota/security/advisories/new)
+[relato privado de vulnerabilidade](https://github.com/kyotodevIndie/tera-agent-companion/security/advisories/new)
 do GitHub, com os passos pra reproduzir e o impacto que você imagina.
 
 Respondemos assim que possível e combinamos com você quando divulgar a correção.
