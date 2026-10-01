@@ -1,7 +1,11 @@
 name: Release
 
-# Cria uma tag de versão (ex.: git tag v0.1.0 && git push --tags) e este workflow
-# gera o instalador do Windows e abre um rascunho de release com ele anexado.
+# Cria uma tag de versão (ex.: git tag v0.1.0 && git push origin v0.1.0) e este workflow
+# gera o instalador do Windows e abre um RASCUNHO de release com ele anexado. Nada fica
+# público até alguém revisar e clicar em "Publish release" no GitHub.
+#
+# Notas: se existir .github/release-notes/<tag>.md, ele vira o texto da release; as notas
+# automáticas do GitHub (PRs e commits) entram logo depois.
 on:
   push:
     tags: ['v*.*.*']
@@ -19,18 +23,35 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm ci
-      - name: A tag bate com a versão do package.json
+      - name: A tag bate com a versão do package.json e do plugin
         shell: bash
         run: |
-          version=$(node -p "require('./package.json').version")
-          if [ "v$version" != "$GITHUB_REF_NAME" ]; then
-            echo "::error::tag $GITHUB_REF_NAME, mas o package.json está em $version"; exit 1
+          app=$(node -p "require('./package.json').version")
+          plugin=$(node -p "require('./plugin/.claude-plugin/plugin.json').version")
+          if [ "v$app" != "$GITHUB_REF_NAME" ] || [ "v$plugin" != "$GITHUB_REF_NAME" ]; then
+            echo "::error::tag $GITHUB_REF_NAME, mas package.json está em $app e plugin.json em $plugin"; exit 1
           fi
       - run: npm run check
       - run: npm run dist
+      - name: Notas da release
+        shell: bash
+        run: |
+          notes=".github/release-notes/$GITHUB_REF_NAME.md"
+          if [ -f "$notes" ]; then cp "$notes" release-body.md; else : > release-body.md; fi
+          # sem assinatura digital, o hash é o jeito de conferir o download
+          {
+            echo ""
+            echo "### SHA-256"
+            echo '```'
+            (cd release && sha256sum *.exe)
+            echo '```'
+          } >> release-body.md
       - uses: softprops/action-gh-release@v2
         with:
           draft: true
+          # 0.x é beta: marca como pré-lançamento (também pra tags com sufixo, ex.: v1.0.0-rc.1)
+          prerelease: ${{ startsWith(github.ref_name, 'v0.') || contains(github.ref_name, '-') }}
+          body_path: release-body.md
           generate_release_notes: true
           files: |
             release/*.exe

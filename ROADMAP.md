@@ -8,31 +8,27 @@ correspondente (ou abra uma) antes de começar.
 O Claude Code segue como integração de primeira classe, mas o Teracota fica independente
 de fornecedor. Detalhes em [docs/dev/integrations.md](docs/dev/integrations.md).
 
-## ✅ v0.1 — Beta
+## ✅ v0.1 — Primeira beta pública (pronta, aguardando publicação)
 
 - Tera reage ao Claude Code: lendo, digitando, terminal, web, subagentes, erro,
   pedindo atenção, terminou
-- Hooks via `curl` + MCP servido pelo app (`say`, `emote`), sem Node no usuário
+- Plugin com hooks via `curl` (sem Node no usuário); falas pelo MCP (`say`, `emote`)
+  opcionais
 - **Uma Tera só** ou **uma por sessão** (até 5, com cor e plaquinha do projeto)
 - Passeia pela tela ou fica parada; arrastar com balanço físico; clique; carinho
 - Skins de sprite com movimento procedural; desenho clássico em SVG como reserva
-- Bandeja do sistema, primeira execução guiada, abrir com o Windows
-- Plugin do Claude Code + instalador do Windows
+- Bandeja do sistema, primeira execução guiada, conexão com um clique, abrir com o Windows
+- **Companion Core:** arquitetura de adapters (o core não conhece nenhum agente; um teste
+  garante), capabilities por agente, identidade do agente ("Agente · projeto")
+- **API local v1** (`/api/v1/event`) com `source`. Documentada em [docs/dev/api.md](docs/dev/api.md)
+- Instalador do Windows, site e documentação em português e inglês
 
-## v0.2 — Companion Core
+## v0.2 — Sessões de foco
 
-- ✅ **Arquitetura de adapters:** o core não conhece nenhum agente; o Claude Code virou
-  o primeiro adapter (`src/main/integrations/`), e um teste garante a separação
-- ✅ **Capabilities** por agente, que já mudam o comportamento (sem aviso de conclusão,
-  o "trabalhando" expira rápido)
-- ✅ **Identidade do agente:** sessões por `provider:sessionId`; balão e plaquinha
-  mostram "Agente · projeto" quando há agentes diferentes abertos
-- ✅ **API local v1** (`/api/v1/event`) com `source`, pra qualquer ferramenta ganhar
-  sessões e Teras próprias. Documentada em [docs/dev/api.md](docs/dev/api.md)
-- ✅ Versão de desenvolvimento separada da instalada ("Teracota Dev")
-- **Focus Mode** (a definir)
+- **Focus Mode** (Pomodoro): sessões de foco e pausas com a Tera "trabalhando junto",
+  convivendo com a atividade dos agentes. Escopo em definição.
 
-O Claude Code continua sendo a única integração obrigatória nesta versão.
+O Claude Code continua sendo a única integração oficial nesta versão.
 
 ## v0.3 — Animação mais viva
 

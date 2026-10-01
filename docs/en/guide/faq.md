@@ -69,6 +69,9 @@ instantly. If the app hangs, `curl` gives up within 2 seconds.
 - The local server rejects requests from web pages (`Origin` header) and other hosts
   (DNS rebinding). Events only change what Tera shows; they don't run anything.
 - The app only stores your preferences (`%APPDATA%\Teracota\config.json`).
+- On launch it runs **read-only** Claude CLI commands (`claude plugin list`,
+  `claude mcp get teracota`) to check whether the integration is active. It only installs or
+  removes something when you ask (by clicking the offer or from the menu).
 - Found a vulnerability? See the [security policy](https://github.com/kyotodevIndie/teracota/blob/main/SECURITY.md).
 
 ## Does it work on macOS or Linux?

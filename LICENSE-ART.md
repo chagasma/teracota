@@ -1,6 +1,7 @@
 # Licença da arte
 
-A arte da Tera — sprites, ícones e demais imagens em `assets/` — é licenciada sob a
+A arte da Tera — sprites, ícones e demais imagens em `assets/` e em `docs/public/` (site),
+incluindo versões reduzidas e a imagem de compartilhamento (`og.png`) — é licenciada sob a
 [Creative Commons Atribuição 4.0 Internacional (CC BY 4.0)](https://creativecommons.org/licenses/by/4.0/deed.pt-br).
 
 **Tera** © 2026 Thallys Morais ([kyotodevIndie](https://github.com/kyotodevIndie))
