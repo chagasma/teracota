@@ -6,7 +6,7 @@ versão for `0.x`, o projeto é beta e a API pode mudar entre versões menores.
 
 ## [Não lançado]
 
-## [0.1.0] — beta (a publicar)
+## [0.1.0] — 2026-10-01 (beta)
 
 Primeira versão pública: beta pra Windows.
 
