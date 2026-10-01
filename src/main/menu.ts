@@ -2,7 +2,7 @@
 import { app, Menu, type MenuItemConstructorOptions } from 'electron';
 import { APP_NAME, CHARACTER_NAME } from '../shared/brand';
 import { SVG_SKIN_ID } from '../shared/skin';
-import { connectAgent } from './connect-flow';
+import { connectAgent, connectOpenSessions } from './connect-flow';
 import { ADAPTERS } from './integrations';
 import type { Entity } from './entity';
 import { MAX_ENTITIES, type EntityManager } from './manager';
@@ -21,10 +21,12 @@ function skinItems(manager: EntityManager): MenuItemConstructorOptions[] {
 const STARTUP_LABEL = process.platform === 'win32' ? 'Abrir com o Windows' : 'Abrir ao iniciar o sistema';
 
 function connectItems(manager: EntityManager): MenuItemConstructorOptions[] {
-  return ADAPTERS.filter((a) => a.connect).map((a) => ({
-    label: a.connect!.label,
-    click: () => void connectAgent(manager, a),
-  }));
+  return ADAPTERS.filter((a) => a.connect).flatMap((a): MenuItemConstructorOptions[] => [
+    { label: a.connect!.label, click: () => void connectAgent(manager, a) },
+    ...(a.connect!.openSessions
+      ? [{ label: `Conectar sessões já abertas (${a.displayName})`, click: () => connectOpenSessions(manager, a) }]
+      : []),
+  ]);
 }
 
 /** @param entity a Tera clicada (ausente quando o menu vem da bandeja) */

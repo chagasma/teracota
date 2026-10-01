@@ -25,10 +25,14 @@ export async function connectAgent(manager: EntityManager, adapter: AgentAdapter
 
   if (result.ok) {
     manager.markConnectOffered();
+    const reload = connector.openSessions?.command;
+    if (reload) clipboard.writeText(reload);
     manager.broadcast({
       state: 'happy',
-      duration: 8000,
-      say: 'Pronto, conectei! Sessões que já estavam abertas precisam ser reiniciadas 😊',
+      duration: 10_000,
+      say: reload
+        ? `Pronto, conectei! Sessões já abertas: cola ${reload} nelas (já copiei) 😊`
+        : 'Pronto, conectei! Sessões que já estavam abertas precisam ser reiniciadas 😊',
     });
     return;
   }
@@ -40,6 +44,19 @@ export async function connectAgent(manager: EntityManager, adapter: AgentAdapter
     say: result.reason === 'not-found'
       ? `Não achei o ${adapter.displayName} aqui 🤔 Copiei um comando: cola num terminal e aperta Enter!`
       : 'Algo deu errado 😣 Copiei o comando: cola num terminal pra ver o que houve.',
+  });
+}
+
+/** Sessões que já estavam abertas: copia o comando que as conecta sem reiniciar */
+export function connectOpenSessions(manager: EntityManager, adapter: AgentAdapter): void {
+  const command = adapter.connect?.openSessions?.command;
+  if (!command) return;
+  clipboard.writeText(command);
+  manager.setVisible(true);
+  manager.broadcast({
+    state: 'attention',
+    duration: 9000,
+    say: `Copiei ${command}! Cola em cada sessão do ${adapter.displayName} que já estava aberta 📋`,
   });
 }
 

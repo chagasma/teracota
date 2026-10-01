@@ -15,6 +15,8 @@ e o projeto segue [versionamento semântico](https://semver.org/lang/pt-BR/).
 - Na primeira vez, se achar um agente instalado e ainda não conectado, a Tera oferece:
   um clique nela e ela se conecta (sem instalar nada sem o clique)
 - Na primeira execução do app instalado, já liga "Abrir com o Windows"
+- "Conectar sessões já abertas": copia `/reload-plugins` pra conectar sessões do Claude Code
+  que já estavam abertas, sem reiniciar (adapters declaram isso via `connect.openSessions`)
 - `docs/ARQUITETURA.md`, `docs/INTEGRACOES.md` e `docs/API.md`
 
 ### Alterado

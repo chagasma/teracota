@@ -106,7 +106,14 @@ export const claudeCode: AgentAdapter = {
     mcp: true,
   },
   routes: ['/hook', '/integrations/claude-code'],
-  connect: { label: 'Conectar ao Claude Code', run: installPlugin, status: pluginStatus, manualCommand: TERMINAL_COMMAND },
+  connect: {
+    label: 'Conectar ao Claude Code',
+    run: installPlugin,
+    status: pluginStatus,
+    manualCommand: TERMINAL_COMMAND,
+    // carrega o plugin recém-instalado numa sessão já aberta, sem reiniciar
+    openSessions: { command: '/reload-plugins' },
+  },
   toSignal: (body) => {
     const input = parseHookInput(body);
     return input && hookToSignal(input);

@@ -68,6 +68,14 @@ export interface AgentConnector {
   manualCommand: string;
   /** O agente está instalado? A integração já está ativa? (usado pra oferecer a conexão) */
   status(): Promise<ConnectStatus>;
+  /**
+   * Opcional: como sessões que já estavam abertas passam a enviar eventos sem reiniciar.
+   * Um app de fora não consegue digitar dentro da sessão — então a Tera copia o comando.
+   */
+  openSessions?: {
+    /** Comando pra colar em cada sessão aberta, ex.: "/reload-plugins" */
+    command: string;
+  };
 }
 
 /** connected = já integrado; available = agente instalado, falta conectar; unavailable = agente não encontrado */

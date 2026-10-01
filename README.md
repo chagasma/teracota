@@ -31,7 +31,8 @@ Hoje ela acompanha o **Claude Code**. Outros agentes (OpenCode, Codex) estão no
    /plugin marketplace add kyotodevIndie/teracota
    /plugin install teracota@teracota
    ```
-3. Pronto. Abra (ou reinicie) uma sessão do Claude Code e a Tera começa a reagir.
+3. Pronto. Sessões novas do Claude Code já reagem. Sessões **que já estavam abertas**: rode
+   `/reload-plugins` nelas (botão direito na Tera → **Conectar sessões já abertas** copia o comando).
 
 Com o app fechado, o plugin não atrapalha nada — os eventos só não chegam.
 
