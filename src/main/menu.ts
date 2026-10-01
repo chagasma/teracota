@@ -2,7 +2,7 @@
 import { app, Menu, type MenuItemConstructorOptions } from 'electron';
 import { APP_NAME, CHARACTER_NAME } from '../shared/brand';
 import { SVG_SKIN_ID } from '../shared/skin';
-import { connectAgent, connectOpenSessions } from './connect-flow';
+import { connectAgent, connectOpenSessions, speechEnabled, toggleSpeech } from './connect-flow';
 import { ADAPTERS } from './integrations';
 import type { Entity } from './entity';
 import { MAX_ENTITIES, type EntityManager } from './manager';
@@ -25,6 +25,14 @@ function connectItems(manager: EntityManager): MenuItemConstructorOptions[] {
     { label: a.connect!.label, click: () => void connectAgent(manager, a) },
     ...(a.connect!.openSessions
       ? [{ label: `Conectar sessões já abertas (${a.displayName})`, click: () => connectOpenSessions(manager, a) }]
+      : []),
+    ...(a.connect!.speech
+      ? [{
+        label: `Deixar o ${a.displayName} falar pela Tera`,
+        type: 'checkbox' as const,
+        checked: speechEnabled(a),
+        click: () => void toggleSpeech(manager, a),
+      }]
       : []),
   ]);
 }

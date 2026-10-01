@@ -8,7 +8,7 @@ import { loadConfig } from './config';
 import type { Entity } from './entity';
 import { EntityManager } from './manager';
 import { buildMenu } from './menu';
-import { offerConnection, onTeraClicked } from './connect-flow';
+import { offerConnection, onTeraClicked, refreshSpeech } from './connect-flow';
 import { assetsDir } from './paths';
 import { startEventServer } from './server';
 import { loadSkin } from './skins';
@@ -61,6 +61,7 @@ if (!app.requestSingleInstanceLock()) {
     manager.start();
     // depois da saudação: se achar um agente instalado e não conectado, oferece conectar
     setTimeout(() => void offerConnection(manager), 5000);
+    void refreshSpeech();
     createTray();
     startEventServer(getPort(), {
       onSignal: (signal) => manager.handleSignal(signal),

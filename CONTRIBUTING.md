@@ -64,17 +64,20 @@ curl -X POST http://127.0.0.1:7777/api/v1/event -H "Content-Type: application/js
 
 ## Conectando o seu Claude Code ao app em desenvolvimento
 
-O app recebe eventos do Claude Code por hooks. Pra desenvolver sem instalar o plugin:
+O app recebe eventos do Claude Code por hooks. Escolha **um** dos caminhos:
 
-1. Copie `.claude/settings.example.json` para `.claude/settings.local.json`
-   (esse arquivo é pessoal e não vai pro git).
-2. Abra uma sessão do Claude Code **nesta pasta** e aprove o servidor MCP `teracota`
-   quando ele perguntar (vem do `.mcp.json`).
+- **Plugin** (o mesmo dos usuários): `claude plugin marketplace add kyotodevIndie/teracota`
+  e `claude plugin install teracota@teracota`. Pra testar mudanças no próprio plugin, aponte
+  o marketplace pra sua cópia local: `claude plugin marketplace add ./`.
+- **Só nesta pasta, sem plugin:** copie `.claude/settings.example.json` para
+  `.claude/settings.local.json` (é pessoal e não vai pro git).
 
-Assim, o próprio Claude que te ajuda a programar faz a Tera reagir. 😄
+Não use os dois na mesma pasta, ou os eventos chegam em dobro. Assim, o próprio Claude
+que te ajuda a programar faz a Tera reagir. 😄
 
-> Se você também tiver o **plugin** instalado, não use as duas coisas na mesma pasta:
-> os eventos chegariam em dobro.
+As **falas pelo MCP** (`say`/`emote`) são opcionais e ficam fora do plugin. Ligue no menu
+da Tera → **Deixar o Claude Code falar pela Tera**, ou à mão:
+`claude mcp add --scope local --transport http teracota http://127.0.0.1:7777/mcp`.
 
 ## Onde fica cada coisa
 

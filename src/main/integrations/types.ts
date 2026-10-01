@@ -76,6 +76,18 @@ export interface AgentConnector {
     /** Comando pra colar em cada sessão aberta, ex.: "/reload-plugins" */
     command: string;
   };
+  /**
+   * Opcional: o agente falar pela Tera (ferramentas MCP say/emote). Fica separado da
+   * conexão principal porque pode ter custo pro usuário (ex.: o agente mostra erro de
+   * MCP quando o Teracota está fechado). Vira uma opção liga/desliga no menu.
+   */
+  speech?: AgentSpeech;
+}
+
+export interface AgentSpeech {
+  enable(port: number): Promise<ConnectResult>;
+  disable(): Promise<ConnectResult>;
+  enabled(): Promise<boolean>;
 }
 
 /** connected = já integrado; available = agente instalado, falta conectar; unavailable = agente não encontrado */

@@ -21,6 +21,8 @@ const HOME_IDENTITY: Identity = { label: null, color: ENTITY_COLORS[0] };
 
 export class EntityManager {
   private entities: Entity[] = [];
+  /** A Tera "de casa": nunca vai embora e é a única que lembra a posição entre execuções */
+  private home: Entity | null = null;
   private readonly sessions = new SessionTracker();
   private pendingMcp: { key: string; at: number } | null = null;
 
@@ -225,9 +227,9 @@ export class EntityManager {
     return entity;
   }
 
-  /** Sessão acabou: a última Tera volta a ser "de casa"; as outras vão embora */
+  /** Sessão acabou: a Tera de casa (ou a última) fica livre; as outras vão embora */
   private release(entity: Entity): void {
-    if (this.entities.length === 1) {
+    if (entity === this.home || this.entities.length === 1) {
       entity.setIdentity(null, HOME_IDENTITY);
       entity.send({ state: 'idle', working: false, say: 'Tchau! 👋' });
       return;
@@ -254,7 +256,7 @@ export class EntityManager {
   private spawnHome(): void {
     const { x, y } = this.config;
     const saved = x !== undefined && y !== undefined ? { x, y } : null;
-    this.spawn(saved && isOnScreen(saved) ? saved : cornerPosition(), HOME_IDENTITY, true);
+    this.home = this.spawn(saved && isOnScreen(saved) ? saved : cornerPosition(), HOME_IDENTITY, true);
   }
 
   private spawn(position: Point, identity: Identity, persist = false): Entity {

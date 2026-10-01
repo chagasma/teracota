@@ -5,6 +5,7 @@ import { clipboard } from 'electron';
 import { ADAPTERS } from './integrations';
 import type { AgentAdapter } from './integrations/types';
 import type { EntityManager } from './manager';
+import { getPort } from '../shared/protocol';
 
 /** Por quanto tempo um clique na Tera ainda aceita a oferta */
 const OFFER_VALID_MS = 2 * 60 * 1000;
@@ -44,6 +45,43 @@ export async function connectAgent(manager: EntityManager, adapter: AgentAdapter
     say: result.reason === 'not-found'
       ? `Não achei o ${adapter.displayName} aqui 🤔 Copiei um comando: cola num terminal e aperta Enter!`
       : 'Algo deu errado 😣 Copiei o comando: cola num terminal pra ver o que houve.',
+  });
+}
+
+/** Estado das "falas pelo agente" por adapter — cache, porque o menu é montado na hora e a CLI é lenta */
+const speechOn = new Map<string, boolean>();
+
+export async function refreshSpeech(): Promise<void> {
+  for (const adapter of ADAPTERS) {
+    const speech = adapter.connect?.speech;
+    if (speech) speechOn.set(adapter.id, await speech.enabled().catch(() => false));
+  }
+}
+
+export const speechEnabled = (adapter: AgentAdapter): boolean => speechOn.get(adapter.id) === true;
+
+/** Liga/desliga o agente falar pela Tera (ex.: MCP say/emote) */
+export async function toggleSpeech(manager: EntityManager, adapter: AgentAdapter): Promise<void> {
+  const speech = adapter.connect?.speech;
+  if (!speech || connecting) return;
+  connecting = true;
+  const turnOn = !speechEnabled(adapter);
+  manager.setVisible(true);
+  const result = await (turnOn ? speech.enable(getPort()) : speech.disable());
+  connecting = false;
+
+  if (result.ok) {
+    speechOn.set(adapter.id, turnOn);
+    manager.broadcast(turnOn
+      ? { state: 'happy', duration: 9000, say: `Agora o ${adapter.displayName} pode falar por mim! Vale pras próximas sessões ✨` }
+      : { state: 'idle', duration: 5000, say: `Combinado, o ${adapter.displayName} não fala mais por mim.` });
+    return;
+  }
+  if (result.reason === 'failed') console.error(`[teracota] falas (${adapter.id}):\n`, result.output);
+  manager.broadcast({
+    state: 'error',
+    duration: 6000,
+    say: result.reason === 'not-found' ? `Não achei o ${adapter.displayName} aqui 🤔` : 'Não consegui mudar isso 😣',
   });
 }
 

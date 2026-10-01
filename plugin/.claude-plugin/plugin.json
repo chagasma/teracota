@@ -1,7 +1,7 @@
 {
   "name": "teracota",
   "version": "0.1.0",
-  "description": "Conecta o Claude Code à Tera, uma personagem de desktop que reage ao que o Claude está fazendo (precisa do app Teracota aberto).",
+  "description": "Conecta o Claude Code à Tera, uma personagem de desktop que reage ao que o Claude está fazendo. Precisa do app Teracota aberto; com ele fechado, nada acontece.",
   "author": { "name": "Thallys Morais" },
   "keywords": ["desktop-pet", "companion", "mascot"]
 }

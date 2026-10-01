@@ -4,7 +4,7 @@ import { MCP_SERVER_NAME } from '../../../shared/brand';
 import type { StateName } from '../../../shared/protocol';
 import { projectName } from '../../sessions';
 import type { AgentAdapter, AgentSignal } from '../types';
-import { TERMINAL_COMMAND, installPlugin, pluginStatus } from './connect';
+import { TERMINAL_COMMAND, disableMcp, enableMcp, installPlugin, mcpEnabled, pluginStatus } from './connect';
 
 export const PROVIDER = 'claude-code';
 
@@ -113,6 +113,8 @@ export const claudeCode: AgentAdapter = {
     manualCommand: TERMINAL_COMMAND,
     // carrega o plugin recém-instalado numa sessão já aberta, sem reiniciar
     openSessions: { command: '/reload-plugins' },
+    // MCP opcional (escopo de usuário), fora do plugin: com o app fechado ele dá erro no Claude Code
+    speech: { enable: enableMcp, disable: disableMcp, enabled: mcpEnabled },
   },
   toSignal: (body) => {
     const input = parseHookInput(body);
