@@ -8,7 +8,7 @@ e o projeto segue [versionamento semântico](https://semver.org/lang/pt-BR/).
 ### Adicionado
 - **API local v1** (`POST /api/v1/event`, `/event` como alias): eventos com `source`
   (agente, sessão, projeto) e `lifecycle` entram no fluxo de sessões — qualquer
-  ferramenta ganha Teras próprias no modo "uma por sessão". Documentada em `docs/API.md`
+  ferramenta ganha Teras próprias no modo "uma por sessão". Documentada em `docs/dev/api.md`
 - Com agentes diferentes abertos, balão e plaquinha mostram "Agente · projeto"
 - "Conectar ao Claude Code" instala o plugin sozinho pela CLI (antes copiava os
   comandos, que colavam juntos numa linha só)
@@ -17,7 +17,7 @@ e o projeto segue [versionamento semântico](https://semver.org/lang/pt-BR/).
 - Na primeira execução do app instalado, já liga "Abrir com o Windows"
 - "Conectar sessões já abertas": copia `/reload-plugins` pra conectar sessões do Claude Code
   que já estavam abertas, sem reiniciar (adapters declaram isso via `connect.openSessions`)
-- `docs/ARQUITETURA.md`, `docs/INTEGRACOES.md` e `docs/API.md`
+- `docs/dev/architecture.md`, `docs/dev/integrations.md` e `docs/dev/api.md`
 
 ### Alterado
 - **O app agora se chama Teracota** (plugin `teracota@teracota`, MCP `teracota`, repositório

@@ -27,6 +27,8 @@ jobs:
       - run: npm run lint
       - run: npm test
       - run: npm run build
+      - name: Site (VitePress) compila sem links quebrados
+        run: npm run docs:build
       - name: Manifestos do plugin são JSON válido
         run: |
           for f in plugin/.claude-plugin/plugin.json plugin/hooks/hooks.json plugin/.mcp.json .claude-plugin/marketplace.json assets/skins/*/skin.json; do

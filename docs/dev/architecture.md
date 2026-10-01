@@ -1,8 +1,12 @@
+---
+description: Camadas, contratos e decisões técnicas do Teracota.
+---
+
 # Arquitetura
 
 Visão técnica do Teracota pra quem vai contribuir. Pra instalar e usar, veja o
-[README](../README.md). Sobre agentes e adapters: [INTEGRACOES.md](INTEGRACOES.md). Sobre a
-API local: [API.md](API.md).
+[guia do usuário](/guide/installation). Sobre agentes e adapters: [Integrações](./integrations). Sobre a
+API local: [API local](./api).
 
 ## Stack
 
@@ -11,11 +15,11 @@ API local: [API.md](API.md).
 | App | Electron (main + preload + renderer), sem framework de UI: DOM, Canvas 2D e SVG |
 | Linguagem | TypeScript estrito |
 | Build | esbuild (`build.mjs`); tipos checados à parte com `tsc --noEmit` |
-| Integração | Adapters por agente (Claude Code: hooks via `curl`) + API local + MCP (`@modelcontextprotocol/sdk`) servido pelo app |
-| Testes | Vitest (lógica sem Electron) |
+| Integração | Adapters por agente (Claude Code: hooks via `curl`) + API local + MCP opcional (`@modelcontextprotocol/sdk`) servido pelo app |
+| Testes | Vitest (lógica pura, servidor HTTP real e o core com o Electron simulado) |
 | Lint | Biome (só linter) |
 | Empacotamento | electron-builder (instalador NSIS do Windows) |
-| CI | GitHub Actions: `ci.yml` (checks) e `release.yml` (tag → instalador → rascunho de release) |
+| CI | GitHub Actions: `ci.yml` (checks), `release.yml` (tag → instalador → rascunho de release) e `docs.yml` (este site) |
 
 ## Visão geral
 
@@ -23,7 +27,7 @@ API local: [API.md](API.md).
  Claude Code ─ hooks (curl) ─► POST /hook ──────┐
  (outros agentes: adapters futuros)             │  adapter → AgentSignal
  Qualquer ferramenta ─► POST /api/v1/event ─────┤  (source opcional)
- MCP (say/emote) ─► POST /mcp ──────────────────┤
+ MCP opcional (say/emote) ─► POST /mcp ─────────┤
                                                 ▼
 ┌──────────── Processo principal (Electron main) ────────────┐
 │ server.ts        HTTP local, só 127.0.0.1                  │
@@ -64,7 +68,7 @@ voltam pra `thinking`.
 ### `AgentSignal` (`src/main/integrations/types.ts`)
 
 O que um adapter entrega: `source` (provider, sessão, projeto), `lifecycle`, `working`,
-`mcpCall` e `event`. Detalhes em [INTEGRACOES.md](INTEGRACOES.md).
+`mcpCall` e `event`. Detalhes em [Integrações](./integrations).
 
 ### Roteamento (`src/main/manager.ts`)
 
@@ -84,7 +88,7 @@ O que um adapter entrega: `source` (provider, sessão, projeto), `lifecycle`, `w
 
 `window.teracota`: do main pro renderer vão `onEvent`, `onWalk`, `onCursor` (a cada
 33ms), `onMode`, `onIdentity`, `onLeave` e `getSkin`; do renderer pro main vão
-`setIgnoreMouse`, `openContextMenu`, `moveBy`, `dragEnd` e `setWalkAllowed`.
+`setIgnoreMouse`, `openContextMenu`, `moveBy`, `dragEnd`, `setWalkAllowed` e `notifyClick`.
 
 ### `Character` (`src/renderer/character.ts`)
 
@@ -96,7 +100,7 @@ implementar essa interface.
 ### Skins
 
 `assets/skins/<id>/skin.json` ou `%APPDATA%/Teracota/skins/<id>/`. Formato no
-[README](../README.md#skins).
+[Criando skins](./skins).
 
 ## Decisões e restrições
 
@@ -119,7 +123,7 @@ implementar essa interface.
 ## Limitações conhecidas
 
 - Só 4 frames por animação; o ícone da atividade não se ajusta por pose.
-- Com o app fechado, o Claude Code mostra "MCP teracota falhou ao conectar".
-- Sem testes automatizados do `EntityManager`, das janelas e do renderer.
+- As falas pelo MCP são opcionais: quem liga e fecha o app vê erro de conexão do MCP no Claude Code.
+- Sem testes automatizados das janelas (Electron real), do renderer e de ponta a ponta.
 - macOS e Linux sem build nem teste; instalador do Windows sem assinatura e sem
   atualização automática.

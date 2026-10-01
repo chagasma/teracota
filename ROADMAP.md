@@ -6,7 +6,7 @@ correspondente (ou abra uma) antes de começar.
 
 **Objetivo de longo prazo:** *Connect your coding agent and give it a life on your desktop.*
 O Claude Code segue como integração de primeira classe, mas o Teracota fica independente
-de fornecedor. Detalhes em [docs/INTEGRACOES.md](docs/INTEGRACOES.md).
+de fornecedor. Detalhes em [docs/dev/integrations.md](docs/dev/integrations.md).
 
 ## ✅ v0.1 — Beta
 
@@ -28,7 +28,7 @@ de fornecedor. Detalhes em [docs/INTEGRACOES.md](docs/INTEGRACOES.md).
 - ✅ **Identidade do agente:** sessões por `provider:sessionId`; balão e plaquinha
   mostram "Agente · projeto" quando há agentes diferentes abertos
 - ✅ **API local v1** (`/api/v1/event`) com `source`, pra qualquer ferramenta ganhar
-  sessões e Teras próprias. Documentada em [docs/API.md](docs/API.md)
+  sessões e Teras próprias. Documentada em [docs/dev/api.md](docs/dev/api.md)
 - ✅ Versão de desenvolvimento separada da instalada ("Teracota Dev")
 - **Focus Mode** (a definir)
 
@@ -69,7 +69,7 @@ Depois que o Companion Core estabilizar:
 
 Regras: só interfaces oficiais e estáveis, nada de ler a UI/TUI do agente, e **não
 anunciar suporte antes de validar o fluxo real**. Checklist completo em
-[docs/INTEGRACOES.md](docs/INTEGRACOES.md#checklist-antes-de-integrar-um-agente-novo).
+[docs/dev/integrations.md](docs/dev/integrations.md#checklist-antes-de-integrar-um-agente-novo).
 
 ## v1.0 — Pra todo mundo
 

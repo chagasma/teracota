@@ -1,3 +1,7 @@
+---
+description: Arquitetura de adapters do Teracota, capabilities, status por agente e como integrar um agente novo.
+---
+
 # Integrações com agentes
 
 O Teracota não é preso ao Claude Code. A arquitetura suporta vários agentes de
@@ -47,7 +51,7 @@ O renderer não sabe qual agente originou o evento. Nada de `isClaude`, `isCodex
 (`src/main/integrations/integrations.test.ts`): o CI falha se algo específico de um
 agente aparecer fora de `src/main/integrations/`.
 
-## Como está implementado (v0.2)
+## Como está implementado hoje
 
 ```
 src/main/integrations/
@@ -55,7 +59,7 @@ src/main/integrations/
   index.ts                  registro dos adapters + capabilities das integrações da comunidade
   claude-code/
     adapter.ts              hooks do Claude Code → AgentSignal
-    connect.ts              "Conectar ao Claude Code" (instala o plugin pela CLI)
+    connect.ts              conexão pela CLI: instala o plugin; liga/desliga as falas pelo MCP
     adapter.test.ts
 ```
 
@@ -68,7 +72,7 @@ interface AgentAdapter {
   capabilities: AgentCapabilities;
   routes: string[];                  // rotas HTTP locais que recebem os eventos nativos
   toSignal(body: unknown): AgentSignal | null;
-  connect?: AgentConnector;          // opcional: vira um item "Conectar ao ..." no menu
+  connect?: AgentConnector;          // opcional: itens no menu (conectar, sessões abertas, falas)
 }
 
 interface AgentSignal {
@@ -125,7 +129,8 @@ real aparecer.
 
 ### Claude Code: **SUPORTADO** (integração de referência)
 
-Plugin com hooks via `curl` + MCP no próprio app. Preservar: hooks, MCP, sessões,
+Plugin com hooks via `curl`; falas pelo MCP (servido pelo app) são opcionais e ficam
+fora do plugin, pra não gerar erro com o app fechado. Preservar: hooks, MCP, sessões,
 permissões, atividade de ferramentas, várias sessões, `say` e `emote`.
 
 ### OpenAI Codex: **PLANEJADO, prioridade alta**
@@ -165,7 +170,7 @@ O OpenCode tem uma arquitetura de plugins e eventos adequada. A integração dev
 8. O agente continua funcionando normalmente com o Teracota **fechado**?
 
 Se as respostas forem insuficientes, **não implementar ainda**. Nesse meio-tempo, a
-[API local](API.md) já permite uma integração não oficial.
+[API local](./api) já permite uma integração não oficial.
 
 ## Escrevendo um adapter
 
@@ -180,7 +185,7 @@ Se as respostas forem insuficientes, **não implementar ainda**. Nesse meio-temp
    `127.0.0.1:7777/<sua rota>`, com timeout curto e falha silenciosa se o app estiver
    fechado. Evite exigir Node ou Python na máquina do usuário.
 7. Se o agente tiver como instalar a integração por CLI, implemente `connect`: o menu
-   ganha "Conectar ao <agente>" sozinho.
+   ganha "Conectar ao &lt;agente&gt;" sozinho.
 8. Escreva testes de `toSignal` (veja `claude-code/adapter.test.ts`) e rode `npm run check`.
 
 ## API local universal
@@ -188,7 +193,7 @@ Se as respostas forem insuficientes, **não implementar ainda**. Nesse meio-temp
 `POST /api/v1/event` (com `/event` como alias compatível) aceita um `CompanionEvent` e,
 opcionalmente, um `source`. **Com `source`, a ferramenta ganha sessões, etiqueta de
 origem e uma Tera própria no modo "uma por sessão"**, sem adapter oficial. Especificação
-completa em [API.md](API.md).
+completa em [API local](./api).
 
 ## Adapters da comunidade
 
@@ -202,10 +207,11 @@ baseada no que elas realmente precisaram. Nada de desenhar SDK em cima de hipót
 
 ## Marcos
 
-1. **v0.2, Companion Core:** ✅ arquitetura de adapters, capabilities, identidade do
-   agente, API local v1. O Claude Code continua sendo a única integração obrigatória.
-2. **v0.3 / v0.4:** melhorias visuais e várias Teras. Essas versões não esperam por
-   agentes novos.
+1. **Companion Core:** ✅ arquitetura de adapters, capabilities, identidade do agente e
+   API local v1, todos na primeira beta pública (v0.1). O Claude Code continua sendo a
+   única integração oficial.
+2. **v0.2 a v0.4:** sessões de foco, melhorias visuais e várias Teras. Essas versões não
+   esperam por agentes novos.
 3. **Adapter #2:** OpenCode ou Codex, o que tiver a integração oficial mais madura na
    hora. Objetivo: validar que a arquitetura de adapters funciona de verdade.
 4. **Adapter #3:** o outro. Objetivo: validar a abstração com três sistemas diferentes.

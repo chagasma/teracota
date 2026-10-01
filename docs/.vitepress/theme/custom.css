@@ -1,0 +1,73 @@
+/*
+ * Identidade da Tera: terracota, creme e tinta escura.
+ * Contraste (WCAG): #B4532F sobre branco = 4.98 (AA); #E8956F sobre o fundo escuro = 7.33.
+ * O terracota original (#D97757) fica só pra detalhes decorativos.
+ */
+:root {
+  --tera-terracota: #d97757;
+  --tera-cream: #fff8f0;
+  --tera-ink: #2b2230;
+
+  --vp-c-brand-1: #b4532f;
+  --vp-c-brand-2: #a0482a;
+  --vp-c-brand-3: #b4532f;
+  --vp-c-brand-soft: rgba(217, 119, 87, 0.16);
+
+  --vp-button-brand-bg: #b4532f;
+  --vp-button-brand-hover-bg: #a0482a;
+  --vp-button-brand-active-bg: #8c3f25;
+  --vp-button-brand-text: #ffffff;
+
+  --vp-home-hero-name-color: transparent;
+  --vp-home-hero-name-background: linear-gradient(120deg, #b4532f 20%, #d97757);
+  --vp-home-hero-image-background-image: radial-gradient(circle, rgba(217, 119, 87, 0.45) 30%, rgba(255, 248, 240, 0) 70%);
+  --vp-home-hero-image-filter: blur(40px);
+}
+
+.dark {
+  --vp-c-brand-1: #e8956f;
+  --vp-c-brand-2: #f0a47f;
+  --vp-c-brand-3: #d97757;
+  --vp-c-brand-soft: rgba(232, 149, 111, 0.16);
+
+  --vp-button-brand-bg: #e8956f;
+  --vp-button-brand-hover-bg: #f0a47f;
+  --vp-button-brand-active-bg: #d97757;
+  --vp-button-brand-text: #1b1b1f;
+
+  --vp-home-hero-name-background: linear-gradient(120deg, #e8956f 20%, #f0a47f);
+  --vp-home-hero-image-background-image: radial-gradient(circle, rgba(217, 119, 87, 0.35) 30%, rgba(27, 27, 31, 0) 70%);
+}
+
+/* Tera grandinha no herói, sem esticar em telas pequenas */
+.VPHero .image-src {
+  max-width: 280px;
+  max-height: 280px;
+}
+
+@media (min-width: 960px) {
+  .VPHero .image-src {
+    max-width: 360px;
+    max-height: 360px;
+  }
+}
+
+/* Seções de texto da landing (abaixo das features) */
+.tera-section {
+  max-width: 1152px;
+  margin: 0 auto;
+  padding: 48px 24px 0;
+}
+
+.tera-section h2 {
+  border-top: none;
+  margin-top: 0;
+  padding-top: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

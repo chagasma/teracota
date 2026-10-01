@@ -55,7 +55,7 @@ use outra, como `TERACOTA_PORT=7788 npm start`.
 | `npm run dist` | Gera o instalador em `release/` |
 
 Pra testar reações sem nenhum agente, mande eventos direto pro app pela
-[API local](docs/API.md):
+[API local](docs/dev/api.md):
 
 ```bash
 curl -X POST http://127.0.0.1:7777/api/v1/event -H "Content-Type: application/json" \
@@ -82,7 +82,7 @@ da Tera → **Deixar o Claude Code falar pela Tera**, ou à mão:
 ## Onde fica cada coisa
 
 A arquitetura completa (camadas, contratos, decisões) está em
-[docs/ARQUITETURA.md](docs/ARQUITETURA.md). Atalhos:
+[docs/dev/architecture.md](docs/dev/architecture.md). Atalhos:
 
 | Quero mudar... | Arquivo |
 |---|---|
@@ -107,7 +107,7 @@ O contrato entre elas está em `src/shared/ipc.ts`.
 ## Integrando um agente
 
 O Teracota é pensado pra funcionar com vários agentes de código por meio de
-**adapters**. Antes de começar, leia [docs/INTEGRACOES.md](docs/INTEGRACOES.md): ele tem
+**adapters**. Antes de começar, leia [docs/dev/integrations.md](docs/dev/integrations.md): ele tem
 a arquitetura, o checklist do que o agente precisa oferecer e o passo a passo.
 
 As regras que o CI cobra:
@@ -120,7 +120,7 @@ As regras que o CI cobra:
 - **Só interfaces oficiais e estáveis**, e nada de anunciar suporte antes de validar o
   fluxo real.
 
-Sem adapter oficial, dá pra integrar qualquer ferramenta pela [API local](docs/API.md)
+Sem adapter oficial, dá pra integrar qualquer ferramenta pela [API local](docs/dev/api.md)
 (`/api/v1/event` com `source`), inclusive como protótipo antes de propor um adapter.
 
 ## Estilo de código
@@ -161,20 +161,9 @@ Mexeu em algo visual? Descreva no PR como testou — um gif vale ouro.
 
 ## Skins
 
-Uma skin é uma pasta com um `skin.json` e os frames em PNG. O formato completo está
-no [README](README.md#skins); o essencial:
-
-- **Frames quadrados, fundo transparente**, personagem centralizado e com os **pés
-  sempre na mesma linha** — senão ela "pula" ao trocar de animação.
-- Só a pose **`idle`** é obrigatória. As outras (`walk`, `drag`, `land`, `work`,
-  `think`, `talk`, `happy`, `error`, `sad`, `sleep`, `wave`, `surprised`) caem numa
-  parecida quando faltam.
-- **`walk`** olhando pra um lado só (o outro é espelhado).
-- Poses sentadas costumam sair maiores: corrija com `"scale"` na animação.
-
-Pra testar, coloque a pasta em `%APPDATA%/Teracota/skins/<id>/` e escolha no menu
-**Skin**. Pacotes no formato `desktop-pet-sprite-pack-v1` podem ser convertidos com
-`npm run import-skin -- <pasta> <id> "<Nome>"`.
+O formato, as poses, os requisitos dos frames e como importar um pacote estão em
+**[Criando skins](docs/dev/skins.md)**. Pra testar, coloque a pasta em
+`%APPDATA%/Teracota/skins/<id>/` e escolha no menu **Skin**.
 
 **Licença:** a arte do projeto é [CC BY 4.0](LICENSE-ART.md), e skins enviadas ao repositório
 entram na mesma licença, com o seu crédito. Só envie arte que você fez ou tem direito de

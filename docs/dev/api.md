@@ -1,3 +1,7 @@
+---
+description: API HTTP local do Teracota (/api/v1/event) pra qualquer ferramenta ou agente fazer a Tera reagir.
+---
+
 # API local
 
 Qualquer ferramenta pode fazer a Tera reagir, mesmo sem um adapter oficial: basta
@@ -99,14 +103,14 @@ curl -X POST $E -H "Content-Type: application/json" -d "{$S,\"lifecycle\":\"end\
 
 O servidor só aceita conexões de `127.0.0.1`, recusa requisições com header `Origin`
 (páginas web) e `Host` diferente de `127.0.0.1`/`localhost` (DNS rebinding). Os eventos
-só mudam o que a Tera mostra: não executam nada. Detalhes em [SECURITY.md](../SECURITY.md).
+só mudam o que a Tera mostra: não executam nada. Detalhes em [SECURITY.md](https://github.com/kyotodevIndie/teracota/blob/main/SECURITY.md).
 
 ## Outras rotas
 
 | Rota | Uso |
 |---|---|
 | `GET /health` | Responde `ok` se o app estiver aberto |
-| `POST /mcp` | Servidor MCP (Streamable HTTP, sem estado) com as ferramentas `say` e `emote` |
+| `POST /mcp` | Servidor MCP (Streamable HTTP, sem estado) com as ferramentas `say` e `emote` (as falas opcionais do Claude Code) |
 | `POST /hook` | Eventos nativos do Claude Code (usada pelo plugin) |
 
 ## Versões
