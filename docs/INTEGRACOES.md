@@ -1,16 +1,16 @@
 # Integrações com agentes
 
-O Terracota não é preso ao Claude Code. A arquitetura suporta vários agentes de
+O Teracota não é preso ao Claude Code. A arquitetura suporta vários agentes de
 programação por meio de **adapters** independentes. O objetivo de longo prazo:
 
 > **Connect your coding agent and give it a life on your desktop.**
 > Em vez de "Desktop pet for Claude Code".
 
-O Claude Code continua sendo a integração de primeira classe, mas o Terracota passa a
+O Claude Code continua sendo a integração de primeira classe, mas o Teracota passa a
 ser independente de fornecedor.
 
 ```
-                         TERRACOTA
+                         TERACOTA
                              │
                       Companion Core
               (manager, sessões, Teras, renderer)
@@ -30,7 +30,7 @@ ser independente de fornecedor.
 
 **Nenhum comportamento específico de um agente entra no core, no renderer ou no
 `Character`.** Cada integração traduz os eventos nativos do seu agente pro protocolo
-normalizado do Terracota:
+normalizado do Teracota:
 
 ```
 Claude Code                               OpenCode (planejado)
@@ -89,7 +89,7 @@ Com um só agente, só o projeto.
 ## Modelo de capabilities
 
 Nem todo agente tem os mesmos eventos. Cada adapter **declara** o que consegue
-informar, e o Terracota oferece a melhor experiência possível com isso, sem fingir
+informar, e o Teracota oferece a melhor experiência possível com isso, sem fingir
 features que não existem.
 
 ```ts
@@ -101,7 +101,7 @@ interface AgentCapabilities {
   errors: boolean;        // falhas → Tera confusa
   completion: boolean;    // terminou → Tera comemora
   messages: boolean;      // mensagens do usuário/agente
-  mcp: boolean;           // fala com o MCP do Terracota (say/emote)
+  mcp: boolean;           // fala com o MCP do Teracota (say/emote)
 }
 ```
 
@@ -162,7 +162,7 @@ O OpenCode tem uma arquitetura de plugins e eventos adequada. A integração dev
 5. Dá pra identificar o projeto ou workspace?
 6. Dá pra detectar a conclusão?
 7. A integração funciona **sem runtime externo obrigatório** na máquina do usuário?
-8. O agente continua funcionando normalmente com o Terracota **fechado**?
+8. O agente continua funcionando normalmente com o Teracota **fechado**?
 
 Se as respostas forem insuficientes, **não implementar ainda**. Nesse meio-tempo, a
 [API local](API.md) já permite uma integração não oficial.
@@ -194,7 +194,7 @@ completa em [API.md](API.md).
 
 Objetivo futuro: a comunidade escrever adapters sem modificar o core. Por enquanto, a
 estrutura é `src/main/integrations/<agente>/`. Mais tarde isso pode virar plugins
-externos (`terracota-adapter-foo`).
+externos (`teracota-adapter-foo`).
 
 **Não implementar um runtime de plugins agora.** Primeiro, validar pelo menos três
 integrações reais (Claude Code, Codex e OpenCode). Depois, extrair uma API pública

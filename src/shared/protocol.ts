@@ -1,4 +1,4 @@
-// Protocolo normalizado do Terracota. Toda integração (adapters de agentes, MCP,
+// Protocolo normalizado do Teracota. Toda integração (adapters de agentes, MCP,
 // API local) termina num CompanionEvent — o renderer não sabe de onde ele veio.
 
 export const DEFAULT_PORT = 7777;
@@ -51,7 +51,7 @@ export interface IncomingEvent {
 }
 
 export function getPort(): number {
-  return Number(process.env.TERRACOTA_PORT) || DEFAULT_PORT;
+  return Number(process.env.TERACOTA_PORT) || DEFAULT_PORT;
 }
 
 function isOneOf<T extends string>(list: readonly T[], value: unknown): value is T {

@@ -33,7 +33,7 @@ export async function connectAgent(manager: EntityManager, adapter: AgentAdapter
     return;
   }
   clipboard.writeText(connector.manualCommand);
-  if (result.reason === 'failed') console.error(`[terracota] falha ao conectar ${adapter.id}:\n`, result.output);
+  if (result.reason === 'failed') console.error(`[teracota] falha ao conectar ${adapter.id}:\n`, result.output);
   manager.broadcast({
     state: result.reason === 'not-found' ? 'attention' : 'error',
     duration: 9000,

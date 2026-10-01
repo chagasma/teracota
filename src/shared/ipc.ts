@@ -3,19 +3,19 @@ import type { CompanionEvent } from './protocol';
 import type { SkinInfo } from './skin';
 
 export const IPC = {
-  event: 'terracota:event',
-  walk: 'terracota:walk',
-  cursor: 'terracota:cursor',
-  mode: 'terracota:mode',
-  identity: 'terracota:identity',
-  leave: 'terracota:leave',
-  setIgnoreMouse: 'terracota:set-ignore-mouse',
-  contextMenu: 'terracota:context-menu',
-  moveBy: 'terracota:move-by',
-  dragEnd: 'terracota:drag-end',
-  walkAllowed: 'terracota:walk-allowed',
-  getSkin: 'terracota:get-skin',
-  clicked: 'terracota:clicked',
+  event: 'teracota:event',
+  walk: 'teracota:walk',
+  cursor: 'teracota:cursor',
+  mode: 'teracota:mode',
+  identity: 'teracota:identity',
+  leave: 'teracota:leave',
+  setIgnoreMouse: 'teracota:set-ignore-mouse',
+  contextMenu: 'teracota:context-menu',
+  moveBy: 'teracota:move-by',
+  dragEnd: 'teracota:drag-end',
+  walkAllowed: 'teracota:walk-allowed',
+  getSkin: 'teracota:get-skin',
+  clicked: 'teracota:clicked',
 } as const;
 
 /** roam = passeia pela tela; stay = fica parado onde foi deixado */
@@ -69,6 +69,6 @@ export interface CompanionApi {
 
 declare global {
   interface Window {
-    terracota?: CompanionApi;
+    teracota?: CompanionApi;
   }
 }

@@ -18,12 +18,19 @@ export interface Config {
 }
 
 const file = () => path.join(app.getPath('userData'), 'config.json');
-/** Onde a config ficava quando o app se chamava waifu-claude */
-const legacyFile = () => path.join(app.getPath('appData'), 'waifu-claude', 'config.json');
+/** Onde a config ficava com os nomes antigos do app (o mais recente primeiro) */
+const LEGACY_DIRS = ['Terracota', 'waifu-claude'];
+
+/** Config atual ou, na primeira execução depois de renomear o app, a do nome antigo */
+function configSource(): string {
+  if (fs.existsSync(file())) return file();
+  const legacy = LEGACY_DIRS.map((dir) => path.join(app.getPath('appData'), dir, 'config.json')).find((f) => fs.existsSync(f));
+  return legacy ?? file();
+}
 
 export function loadConfig(): Config {
   try {
-    const source = fs.existsSync(file()) ? file() : legacyFile();
+    const source = configSource();
     const raw = JSON.parse(fs.readFileSync(source, 'utf8')) as Partial<Config> & { mode?: string };
     const moveMode = raw.moveMode ?? raw.mode; // 'mode' era o nome antigo
     return {
@@ -47,7 +54,7 @@ export function saveConfig(config: Config): void {
     try {
       fs.writeFileSync(file(), JSON.stringify(config, null, 2));
     } catch (err) {
-      console.error('[terracota] não consegui salvar config:', err);
+      console.error('[teracota] não consegui salvar config:', err);
     }
   }, 500);
 }

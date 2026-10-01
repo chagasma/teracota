@@ -21,7 +21,7 @@ export interface AgentCapabilities {
   completion: boolean;
   /** Mensagens do usuário/agente */
   messages: boolean;
-  /** O agente fala com o MCP do Terracota (say/emote) */
+  /** O agente fala com o MCP do Teracota (say/emote) */
   mcp: boolean;
 }
 
@@ -39,7 +39,7 @@ export interface AgentSignal {
   lifecycle?: 'start' | 'end';
   /** true = começou a trabalhar, false = terminou; ausente = não muda */
   working?: boolean;
-  /** A próxima ação é uma chamada ao MCP do Terracota (liga a chamada a esta sessão) */
+  /** A próxima ação é uma chamada ao MCP do Teracota (liga a chamada a esta sessão) */
   mcpCall?: boolean;
   /** O que mostrar (null = só atualiza a sessão) */
   event: CompanionEvent | null;
@@ -55,7 +55,7 @@ export interface AgentAdapter {
   routes: string[];
   /** Evento nativo (JSON) → sinal normalizado; null = ignorar */
   toSignal(body: unknown): AgentSignal | null;
-  /** Opcional: conecta o agente ao Terracota (ex.: instala o plugin). Vira um item no menu. */
+  /** Opcional: conecta o agente ao Teracota (ex.: instala o plugin). Vira um item no menu. */
   connect?: AgentConnector;
 }
 

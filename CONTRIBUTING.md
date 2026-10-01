@@ -1,4 +1,4 @@
-# Contribuindo com o Terracota
+# Contribuindo com o Teracota
 
 Que bom que você quer ajudar a Tera! 🐾 Toda contribuição conta: reportar um bug,
 sugerir uma ideia, melhorar o código, desenhar uma skin ou traduzir falas.
@@ -32,17 +32,17 @@ Precisa de **Node.js 22+** e **Windows** (é a plataforma suportada por enquanto
 macOS e Linux estão no roadmap — ajuda bem-vinda).
 
 ```bash
-git clone https://github.com/kyotodevIndie/tera-agent-companion.git
-cd tera-agent-companion
+git clone https://github.com/kyotodevIndie/teracota.git
+cd teracota
 npm install
 npm start
 ```
 
 A Tera aparece no canto da tela e um ícone surge na bandeja do sistema.
 
-Rodando pelo código, o app se chama **"Terracota Dev"**, com configuração própria, e
-convive com o Terracota instalado. Só a porta é a mesma: se o instalado estiver aberto,
-use outra, como `TERRACOTA_PORT=7788 npm start`.
+Rodando pelo código, o app se chama **"Teracota Dev"**, com configuração própria, e
+convive com o Teracota instalado. Só a porta é a mesma: se o instalado estiver aberto,
+use outra, como `TERACOTA_PORT=7788 npm start`.
 
 | Comando | O que faz |
 |---|---|
@@ -68,7 +68,7 @@ O app recebe eventos do Claude Code por hooks. Pra desenvolver sem instalar o pl
 
 1. Copie `.claude/settings.example.json` para `.claude/settings.local.json`
    (esse arquivo é pessoal e não vai pro git).
-2. Abra uma sessão do Claude Code **nesta pasta** e aprove o servidor MCP `terracota`
+2. Abra uma sessão do Claude Code **nesta pasta** e aprove o servidor MCP `teracota`
    quando ele perguntar (vem do `.mcp.json`).
 
 Assim, o próprio Claude que te ajuda a programar faz a Tera reagir. 😄
@@ -103,7 +103,7 @@ O contrato entre elas está em `src/shared/ipc.ts`.
 
 ## Integrando um agente
 
-O Terracota é pensado pra funcionar com vários agentes de código por meio de
+O Teracota é pensado pra funcionar com vários agentes de código por meio de
 **adapters**. Antes de começar, leia [docs/INTEGRACOES.md](docs/INTEGRACOES.md): ele tem
 a arquitetura, o checklist do que o agente precisa oferecer e o passo a passo.
 
@@ -169,7 +169,7 @@ no [README](README.md#skins); o essencial:
 - **`walk`** olhando pra um lado só (o outro é espelhado).
 - Poses sentadas costumam sair maiores: corrija com `"scale"` na animação.
 
-Pra testar, coloque a pasta em `%APPDATA%/Terracota/skins/<id>/` e escolha no menu
+Pra testar, coloque a pasta em `%APPDATA%/Teracota/skins/<id>/` e escolha no menu
 **Skin**. Pacotes no formato `desktop-pet-sprite-pack-v1` podem ser convertidos com
 `npm run import-skin -- <pasta> <id> "<Nome>"`.
 

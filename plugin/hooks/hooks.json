@@ -1,5 +1,5 @@
 {
-  "description": "Repassa os eventos do Claude Code pro app Terracota (localhost). Falha em silêncio se o app estiver fechado.",
+  "description": "Repassa os eventos do Claude Code pro app Teracota (localhost). Falha em silêncio se o app estiver fechado.",
   "hooks": {
     "SessionStart": [
       { "hooks": [{ "type": "command", "command": "curl -s -m 2 -X POST -H \"Content-Type: application/json\" --data-binary @- http://127.0.0.1:7777/hook || exit 0", "timeout": 5 }] }

@@ -5,7 +5,7 @@ import { GITHUB_REPO } from '../../../shared/brand';
 import type { ConnectResult, ConnectStatus } from '../types';
 
 /** Plugin no formato nome@marketplace */
-export const PLUGIN_ID = 'terracota@terracota';
+export const PLUGIN_ID = 'teracota@teracota';
 
 const STEPS: string[][] = [
   ['plugin', 'marketplace', 'add', GITHUB_REPO],

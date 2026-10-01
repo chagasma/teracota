@@ -41,14 +41,14 @@ function createTray(): void {
 }
 
 // Em desenvolvimento, nome próprio: config e trava de instância separadas do app
-// instalado, pra dar pra rodar os dois (use TERRACOTA_PORT pra mudar a porta).
+// instalado, pra dar pra rodar os dois (use TERACOTA_PORT pra mudar a porta).
 if (!app.isPackaged) app.setName(`${APP_NAME} Dev`);
 
 // Só uma cópia do app (a porta é uma só)
 if (!app.requestSingleInstanceLock()) {
   app.quit();
 } else {
-  app.setAppUserModelId('com.terracota.app');
+  app.setAppUserModelId('com.teracota.app');
 
   app.on('second-instance', () => {
     manager?.setVisible(true);

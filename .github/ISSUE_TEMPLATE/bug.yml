@@ -22,7 +22,7 @@ body:
   - type: input
     id: version
     attributes:
-      label: Versão do Terracota
+      label: Versão do Teracota
       placeholder: 0.1.0
     validations:
       required: true
@@ -55,4 +55,4 @@ body:
     id: extra
     attributes:
       label: Prints, vídeo ou logs
-      description: Se rodou pelo terminal (`npm start`), os logs com `[terracota]` ajudam.
+      description: Se rodou pelo terminal (`npm start`), os logs com `[teracota]` ajudam.

@@ -22,7 +22,7 @@ interface Reaction {
 const DRAG_THRESHOLD = 4;
 const pick = <T>(list: readonly T[]): T => list[Math.floor(Math.random() * list.length)]!;
 
-const api = window.terracota;
+const api = window.teracota;
 const characterEl = document.getElementById('character')!;
 const bubble = new Bubble(
   document.getElementById('bubble')!,
@@ -264,7 +264,7 @@ async function createCharacter(): Promise<Character> {
     try {
       return await SpriteCharacter.create(characterEl, skin);
     } catch (err) {
-      console.error('[terracota] skin falhou, usando o desenho:', err);
+      console.error('[teracota] skin falhou, usando o desenho:', err);
       characterEl.removeAttribute('style');
       characterEl.className = '';
     }

@@ -1,6 +1,6 @@
 # Arquitetura
 
-Visão técnica do Terracota pra quem vai contribuir. Pra instalar e usar, veja o
+Visão técnica do Teracota pra quem vai contribuir. Pra instalar e usar, veja o
 [README](../README.md). Sobre agentes e adapters: [INTEGRACOES.md](INTEGRACOES.md). Sobre a
 API local: [API.md](API.md).
 
@@ -35,7 +35,7 @@ API local: [API.md](API.md).
 │ skins.ts         skins + máscaras de clique                │
 │ menu.ts, main.ts menu, bandeja, ciclo de vida              │
 └──────────────┬─────────────────────────────────────────────┘
-               │ IPC (shared/ipc.ts) — window.terracota no preload
+               │ IPC (shared/ipc.ts) — window.teracota no preload
                ▼
 ┌──────────── Renderer (uma página por Tera) ────────────────┐
 │ app.ts            estados, reações, mouse, arrasto, fala   │
@@ -82,7 +82,7 @@ O que um adapter entrega: `source` (provider, sessão, projeto), `lifecycle`, `w
 
 ### IPC (`src/shared/ipc.ts`)
 
-`window.terracota`: do main pro renderer vão `onEvent`, `onWalk`, `onCursor` (a cada
+`window.teracota`: do main pro renderer vão `onEvent`, `onWalk`, `onCursor` (a cada
 33ms), `onMode`, `onIdentity`, `onLeave` e `getSkin`; do renderer pro main vão
 `setIgnoreMouse`, `openContextMenu`, `moveBy`, `dragEnd` e `setWalkAllowed`.
 
@@ -95,7 +95,7 @@ implementar essa interface.
 
 ### Skins
 
-`assets/skins/<id>/skin.json` ou `%APPDATA%/Terracota/skins/<id>/`. Formato no
+`assets/skins/<id>/skin.json` ou `%APPDATA%/Teracota/skins/<id>/`. Formato no
 [README](../README.md#skins).
 
 ## Decisões e restrições
@@ -113,13 +113,13 @@ implementar essa interface.
    reafirmado a cada 1s.
 6. **Uma `BrowserWindow` por Tera.** O passeio move a janela.
 7. **Assets fora do `.asar`** (`extraResources`), porque são lidos via `file://` e `nativeImage`.
-8. **Dev separado do instalado:** sem empacotar, o app se chama "Terracota Dev" e tem
-   config e trava próprias. `TERRACOTA_PORT` muda a porta.
+8. **Dev separado do instalado:** sem empacotar, o app se chama "Teracota Dev" e tem
+   config e trava próprias. `TERACOTA_PORT` muda a porta.
 
 ## Limitações conhecidas
 
 - Só 4 frames por animação; o ícone da atividade não se ajusta por pose.
-- Com o app fechado, o Claude Code mostra "MCP terracota falhou ao conectar".
+- Com o app fechado, o Claude Code mostra "MCP teracota falhou ao conectar".
 - Sem testes automatizados do `EntityManager`, das janelas e do renderer.
 - macOS e Linux sem build nem teste; instalador do Windows sem assinatura e sem
   atualização automática.

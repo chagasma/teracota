@@ -32,7 +32,7 @@ function readManifest(dir: string): SkinManifest | null {
   try {
     return parseSkinManifest(JSON.parse(fs.readFileSync(path.join(dir, 'skin.json'), 'utf8')));
   } catch (err) {
-    console.error(`[terracota] skin em "${dir}" inválida:`, err);
+    console.error(`[teracota] skin em "${dir}" inválida:`, err);
     return null;
   }
 }

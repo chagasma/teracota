@@ -1,6 +1,6 @@
-# Terracota
+# Teracota
 
-[![CI](https://github.com/kyotodevIndie/tera-agent-companion/actions/workflows/ci.yml/badge.svg)](https://github.com/kyotodevIndie/tera-agent-companion/actions/workflows/ci.yml)
+[![CI](https://github.com/kyotodevIndie/teracota/actions/workflows/ci.yml/badge.svg)](https://github.com/kyotodevIndie/teracota/actions/workflows/ci.yml)
 
 **Tera** é uma gatinha que mora no seu desktop e acompanha o seu trabalho no
 [Claude Code](https://claude.com/claude-code): senta no notebook quando o Claude
@@ -17,19 +17,19 @@ Hoje ela acompanha o **Claude Code**. Outros agentes (OpenCode, Codex) estão no
 
 ## Instalar
 
-1. Baixe o instalador (`Terracota Setup x.y.z.exe`) na página de
-   [Releases](https://github.com/kyotodevIndie/tera-agent-companion/releases) e rode.
+1. Baixe o instalador (`Teracota Setup x.y.z.exe`) na página de
+   [Releases](https://github.com/kyotodevIndie/teracota/releases) e rode.
    O Windows pode mostrar o aviso do SmartScreen (o app ainda não é assinado):
    **Mais informações → Executar assim mesmo**.
 2. Conecte ao Claude Code: botão direito na Tera → **Conectar ao Claude Code**.
    Ela instala o plugin sozinha. Se preferir fazer à mão, rode num terminal:
    ```
-   claude plugin marketplace add kyotodevIndie/tera-agent-companion; claude plugin install terracota@terracota
+   claude plugin marketplace add kyotodevIndie/teracota; claude plugin install teracota@teracota
    ```
    ou, dentro do Claude Code, estes dois comandos **um de cada vez**:
    ```
-   /plugin marketplace add kyotodevIndie/tera-agent-companion
-   /plugin install terracota@terracota
+   /plugin marketplace add kyotodevIndie/teracota
+   /plugin install teracota@teracota
    ```
 3. Pronto. Abra (ou reinicie) uma sessão do Claude Code e a Tera começa a reagir.
 
@@ -54,8 +54,8 @@ O Claude também pode fazer a Tera falar e reagir quando quiser (ferramentas `sa
 
 ## Problemas comuns
 
-**O Claude Code avisa que o MCP `terracota` falhou ao conectar.** O app está fechado.
-Abra o Terracota e reinicie a sessão do Claude Code (ou rode `/mcp` pra reconectar).
+**O Claude Code avisa que o MCP `teracota` falhou ao conectar.** O app está fechado.
+Abra o Teracota e reinicie a sessão do Claude Code (ou rode `/mcp` pra reconectar).
 Sem o app, nada quebra — a Tera só não aparece.
 
 **A Tera sumiu.** Clique no ícone dela na bandeja do sistema (perto do relógio) →
@@ -63,7 +63,7 @@ Sem o app, nada quebra — a Tera só não aparece.
 
 **Não consigo clicar nela.** Só o desenho responde ao mouse — o fundo transparente
 deixa o clique passar pra janela de trás, de propósito. Se nem o desenho responder,
-[abra um bug](https://github.com/kyotodevIndie/tera-agent-companion/issues/new/choose) contando o que você fazia antes.
+[abra um bug](https://github.com/kyotodevIndie/teracota/issues/new/choose) contando o que você fazia antes.
 
 ## Privacidade
 
@@ -102,7 +102,7 @@ estilo de código estão no [CONTRIBUTING.md](CONTRIBUTING.md).
 ```
 
 Cada agente tem um **adapter** que traduz os eventos nativos dele pro protocolo do
-Terracota; o core e o renderer não sabem de onde o evento veio. A integração não precisa
+Teracota; o core e o renderer não sabem de onde o evento veio. A integração não precisa
 de Node na máquina do usuário (hooks via `curl`), e o MCP é servido pelo próprio app.
 
 - [docs/ARQUITETURA.md](docs/ARQUITETURA.md): camadas, contratos e decisões
@@ -113,7 +113,7 @@ de Node na máquina do usuário (hooks via `curl`), e o MCP é servido pelo pró
 
 ### Skins
 
-Ficam em `assets/skins/<id>/` ou `%APPDATA%/Terracota/skins/<id>/`, cada uma com um `skin.json`:
+Ficam em `assets/skins/<id>/` ou `%APPDATA%/Teracota/skins/<id>/`, cada uma com um `skin.json`:
 
 ```json
 {

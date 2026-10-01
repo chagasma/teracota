@@ -5,7 +5,7 @@ Itens com 🌱 são bons pra primeira contribuição. Quer pegar algum? Comente 
 correspondente (ou abra uma) antes de começar.
 
 **Objetivo de longo prazo:** *Connect your coding agent and give it a life on your desktop.*
-O Claude Code segue como integração de primeira classe, mas o Terracota fica independente
+O Claude Code segue como integração de primeira classe, mas o Teracota fica independente
 de fornecedor. Detalhes em [docs/INTEGRACOES.md](docs/INTEGRACOES.md).
 
 ## ✅ v0.1 — Beta
@@ -29,7 +29,7 @@ de fornecedor. Detalhes em [docs/INTEGRACOES.md](docs/INTEGRACOES.md).
   mostram "Agente · projeto" quando há agentes diferentes abertos
 - ✅ **API local v1** (`/api/v1/event`) com `source`, pra qualquer ferramenta ganhar
   sessões e Teras próprias. Documentada em [docs/API.md](docs/API.md)
-- ✅ Versão de desenvolvimento separada da instalada ("Terracota Dev")
+- ✅ Versão de desenvolvimento separada da instalada ("Teracota Dev")
 - **Focus Mode** (a definir)
 
 O Claude Code continua sendo a única integração obrigatória nesta versão.
@@ -81,7 +81,7 @@ anunciar suporte antes de validar o fluxo real**. Checklist completo em
 ## Ideias sem data
 
 - Personagens Live2D ou VRM (3D) como tipo de skin
-- Adapters externos da comunidade (`terracota-adapter-foo`)
+- Adapters externos da comunidade (`teracota-adapter-foo`)
 - Resumo do dia ("hoje o agente editou 42 arquivos e errou 3 vezes 😅")
 - Reagir a eventos do sistema (build quebrou, testes passaram); a API local já permite
   fazer isso por fora
@@ -93,4 +93,4 @@ anunciar suporte antes de validar o fluxo real**. Checklist completo em
 - Ícone de bandeja no formato "template" pro macOS
 - Mensagens de erro melhores quando a porta 7777 já está em uso
 
-Tem uma ideia que não está aqui? Abra uma [sugestão](https://github.com/kyotodevIndie/tera-agent-companion/issues/new/choose).
+Tem uma ideia que não está aqui? Abra uma [sugestão](https://github.com/kyotodevIndie/teracota/issues/new/choose).

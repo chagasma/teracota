@@ -95,7 +95,7 @@ export function startEventServer(port: number, handlers: ServerHandlers): http.S
       try {
         await handleMcpRequest(req, res, body, handlers.onMcp);
       } catch (err) {
-        console.error('[terracota] erro no MCP:', err);
+        console.error('[teracota] erro no MCP:', err);
         if (!res.headersSent) res.writeHead(500).end();
       }
       return;
@@ -107,7 +107,7 @@ export function startEventServer(port: number, handlers: ServerHandlers): http.S
         const signal = adapter.toSignal(body);
         if (signal) handlers.onSignal(signal);
       } catch (err) {
-        console.error(`[terracota] adapter ${adapter.id} falhou:`, err);
+        console.error(`[teracota] adapter ${adapter.id} falhou:`, err);
       }
       res.writeHead(204).end();
       return;
@@ -121,9 +121,9 @@ export function startEventServer(port: number, handlers: ServerHandlers): http.S
     handlers.onEvent(incoming);
     res.writeHead(204).end();
   });
-  server.on('error', (err) => console.error(`[terracota] servidor na porta ${port} falhou:`, err.message));
+  server.on('error', (err) => console.error(`[teracota] servidor na porta ${port} falhou:`, err.message));
   server.listen(port, '127.0.0.1', () => {
-    console.log(`[terracota] ouvindo em http://127.0.0.1:${port} — integrações: ${ADAPTERS.map((a) => a.id).join(', ')}`);
+    console.log(`[teracota] ouvindo em http://127.0.0.1:${port} — integrações: ${ADAPTERS.map((a) => a.id).join(', ')}`);
   });
   return server;
 }

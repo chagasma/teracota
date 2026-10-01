@@ -2,7 +2,7 @@
 
 ## Como o app se expõe
 
-O Terracota abre um servidor HTTP local em `127.0.0.1:7777` para receber os eventos
+O Teracota abre um servidor HTTP local em `127.0.0.1:7777` para receber os eventos
 do Claude Code (hooks) e servir o MCP. Por projeto:
 
 - Ele só escuta em `127.0.0.1` (não aceita conexões de outras máquinas).
@@ -14,7 +14,7 @@ do Claude Code (hooks) e servir o MCP. Por projeto:
 ## Reportando uma falha
 
 **Não abra issue pública.** Use o
-[relato privado de vulnerabilidade](https://github.com/kyotodevIndie/tera-agent-companion/security/advisories/new)
+[relato privado de vulnerabilidade](https://github.com/kyotodevIndie/teracota/security/advisories/new)
 do GitHub, com os passos pra reproduzir e o impacto que você imagina.
 
 Respondemos assim que possível e combinamos com você quando divulgar a correção.

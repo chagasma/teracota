@@ -18,12 +18,14 @@ e o projeto segue [versionamento semântico](https://semver.org/lang/pt-BR/).
 - `docs/ARQUITETURA.md`, `docs/INTEGRACOES.md` e `docs/API.md`
 
 ### Alterado
+- **O app agora se chama Teracota** (plugin `teracota@teracota`, MCP `teracota`, repositório
+  `kyotodevIndie/teracota`). As preferências do nome antigo são migradas sozinhas
 - **Companion Core:** arquitetura de adapters por agente. O Claude Code virou o
   primeiro adapter (`src/main/integrations/claude-code/`); o core e o renderer não
   conhecem nenhum agente — um teste garante isso
 - Capabilities por agente: sem aviso de conclusão, o "trabalhando" expira em 1 min
-- Rodando pelo código, o app se chama "Terracota Dev" e não conflita com o instalado
-- Nomes internos: `WaifuEvent` → `CompanionEvent`, `window.waifu` → `window.terracota`
+- Rodando pelo código, o app se chama "Teracota Dev" e não conflita com o instalado
+- Nomes internos: `WaifuEvent` → `CompanionEvent`, `window.waifu` → `window.teracota`
 - Menu: "Abrir ao iniciar o sistema" fora do Windows; sem ícone no Dock do macOS
 
 ### Corrigido

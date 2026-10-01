@@ -17,4 +17,4 @@ const api: CompanionApi = {
   notifyClick: () => ipcRenderer.send(IPC.clicked),
 };
 
-contextBridge.exposeInMainWorld('terracota', api);
+contextBridge.exposeInMainWorld('teracota', api);

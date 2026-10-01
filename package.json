@@ -1,5 +1,5 @@
 {
-  "name": "terracota",
+  "name": "teracota",
   "version": "0.1.0",
   "description": "Tera, uma personagem de desktop que acompanha o seu trabalho no Claude Code",
   "main": "dist/main.js",
@@ -31,10 +31,10 @@
     "@modelcontextprotocol/sdk": "^1.30.0",
     "zod": "^3.25.76"
   },
-  "productName": "Terracota",
+  "productName": "Teracota",
   "build": {
-    "appId": "com.terracota.app",
-    "productName": "Terracota",
+    "appId": "com.teracota.app",
+    "productName": "Teracota",
     "directories": {
       "output": "release"
     },
@@ -65,7 +65,7 @@
       "oneClick": true,
       "perMachine": false,
       "createDesktopShortcut": true,
-      "shortcutName": "Terracota",
+      "shortcutName": "Teracota",
       "runAfterFinish": true
     },
     "publish": null
@@ -74,10 +74,10 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/kyotodevIndie/tera-agent-companion.git"
+    "url": "https://github.com/kyotodevIndie/teracota.git"
   },
   "bugs": {
-    "url": "https://github.com/kyotodevIndie/tera-agent-companion/issues"
+    "url": "https://github.com/kyotodevIndie/teracota/issues"
   },
-  "homepage": "https://github.com/kyotodevIndie/tera-agent-companion#readme"
+  "homepage": "https://github.com/kyotodevIndie/teracota#readme"
 }

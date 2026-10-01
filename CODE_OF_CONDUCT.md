@@ -1,6 +1,6 @@
 # Código de Conduta
 
-O Terracota adota o [Contributor Covenant, versão 2.1](https://www.contributor-covenant.org/pt-br/version/2/1/code_of_conduct/)
+O Teracota adota o [Contributor Covenant, versão 2.1](https://www.contributor-covenant.org/pt-br/version/2/1/code_of_conduct/)
 como código de conduta. Em resumo: seja gentil, acolhedor e respeitoso. Críticas vão
 para o código, nunca para as pessoas. Assédio, discriminação e ataques pessoais não
 são tolerados em nenhum espaço do projeto (issues, PRs, discussões).

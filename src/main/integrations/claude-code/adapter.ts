@@ -1,5 +1,5 @@
 // Adapter do Claude Code: recebe o JSON cru dos hooks (enviado por curl pelo
-// plugin, em POST /hook) e traduz pra sinais normalizados do Terracota.
+// plugin, em POST /hook) e traduz pra sinais normalizados do Teracota.
 import { MCP_SERVER_NAME } from '../../../shared/brand';
 import type { StateName } from '../../../shared/protocol';
 import { projectName } from '../../sessions';
@@ -16,7 +16,7 @@ export interface HookInput {
   source?: string;
 }
 
-/** As ferramentas do MCP do Terracota aparecem pro Claude como mcp__terracota__say etc. */
+/** As ferramentas do MCP do Teracota aparecem pro Claude como mcp__teracota__say etc. */
 export const MCP_TOOL_PREFIX = `mcp__${MCP_SERVER_NAME}__`;
 
 const TOOL_STATES: Record<string, StateName> = {

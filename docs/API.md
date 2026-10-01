@@ -7,7 +7,7 @@ mandar eventos por HTTP pro app, que escuta **só em `127.0.0.1:7777`**.
 Meu agente / script / CI local
         │  POST http://127.0.0.1:7777/api/v1/event
         ▼
-    Terracota
+    Teracota
 ```
 
 ## `POST /api/v1/event`
