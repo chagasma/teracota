@@ -140,6 +140,7 @@ const petting = new PetDetector(() => {
 });
 
 function onClick(): void {
+  api?.notifyClick();
   if (current === 'sleeping') {
     setState('idle');
     react({ expression: 'surprised', anim: 'perk', say: pick(['Hã?! Tô acordada!', 'Só descansando o olho...']) });

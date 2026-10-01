@@ -2,7 +2,7 @@
 // Se a CLI não estiver no PATH, devolve um comando de uma linha pra colar no terminal.
 import { execFile } from 'node:child_process';
 import { GITHUB_REPO } from '../../../shared/brand';
-import type { ConnectResult } from '../types';
+import type { ConnectResult, ConnectStatus } from '../types';
 
 /** Plugin no formato nome@marketplace */
 export const PLUGIN_ID = 'terracota@terracota';
@@ -50,7 +50,18 @@ export async function installPlugin(): Promise<ConnectResult> {
     if (!r.ok && !/already/i.test(r.output)) return { ok: false, reason: 'failed', output: log.join('\n\n') };
   }
   const list = await run(cli, ['plugin', 'list'], shell);
-  return list.output.includes(PLUGIN_ID.split('@')[0]!)
+  return isInstalled(list.output)
     ? { ok: true }
     : { ok: false, reason: 'failed', output: `${log.join('\n\n')}\n\n$ claude plugin list\n${list.output}` };
+}
+
+const isInstalled = (pluginList: string) => pluginList.includes(PLUGIN_ID.split('@')[0]!);
+
+/** Claude Code instalado? Plugin já ativo? */
+export async function pluginStatus(): Promise<ConnectStatus> {
+  const cli = await findClaude();
+  if (!cli) return 'unavailable';
+  const shell = process.platform === 'win32' && /\.(cmd|bat)$/i.test(cli);
+  const list = await run(cli, ['plugin', 'list'], shell);
+  return list.ok && isInstalled(list.output) ? 'connected' : 'available';
 }

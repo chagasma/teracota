@@ -66,6 +66,11 @@ export interface AgentConnector {
   run(): Promise<ConnectResult>;
   /** Comando pra rodar à mão quando a conexão automática não der certo */
   manualCommand: string;
+  /** O agente está instalado? A integração já está ativa? (usado pra oferecer a conexão) */
+  status(): Promise<ConnectStatus>;
 }
+
+/** connected = já integrado; available = agente instalado, falta conectar; unavailable = agente não encontrado */
+export type ConnectStatus = 'connected' | 'available' | 'unavailable';
 
 export type ConnectResult = { ok: true } | { ok: false; reason: 'not-found' | 'failed'; output: string };

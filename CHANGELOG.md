@@ -12,6 +12,9 @@ e o projeto segue [versionamento semântico](https://semver.org/lang/pt-BR/).
 - Com agentes diferentes abertos, balão e plaquinha mostram "Agente · projeto"
 - "Conectar ao Claude Code" instala o plugin sozinho pela CLI (antes copiava os
   comandos, que colavam juntos numa linha só)
+- Na primeira vez, se achar um agente instalado e ainda não conectado, a Tera oferece:
+  um clique nela e ela se conecta (sem instalar nada sem o clique)
+- Na primeira execução do app instalado, já liga "Abrir com o Windows"
 - `docs/ARQUITETURA.md`, `docs/INTEGRACOES.md` e `docs/API.md`
 
 ### Alterado

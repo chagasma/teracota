@@ -11,6 +11,8 @@ export interface Config {
   skin?: string;
   /** Já se apresentou na primeira execução */
   onboarded?: boolean;
+  /** Já ofereceu conectar a um agente (ou ele já estava conectado) */
+  connectOffered?: boolean;
   x?: number;
   y?: number;
 }
@@ -29,6 +31,7 @@ export function loadConfig(): Config {
       entityMode: raw.entityMode === 'multi' ? 'multi' : 'single',
       ...(typeof raw.skin === 'string' && { skin: raw.skin }),
       ...(raw.onboarded === true && { onboarded: true }),
+      ...(raw.connectOffered === true && { connectOffered: true }),
       ...(typeof raw.x === 'number' && typeof raw.y === 'number' && { x: raw.x, y: raw.y }),
     };
   } catch {

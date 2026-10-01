@@ -4,7 +4,7 @@ import { MCP_SERVER_NAME } from '../../../shared/brand';
 import type { StateName } from '../../../shared/protocol';
 import { projectName } from '../../sessions';
 import type { AgentAdapter, AgentSignal } from '../types';
-import { TERMINAL_COMMAND, installPlugin } from './connect';
+import { TERMINAL_COMMAND, installPlugin, pluginStatus } from './connect';
 
 export const PROVIDER = 'claude-code';
 
@@ -106,7 +106,7 @@ export const claudeCode: AgentAdapter = {
     mcp: true,
   },
   routes: ['/hook', '/integrations/claude-code'],
-  connect: { label: 'Conectar ao Claude Code', run: installPlugin, manualCommand: TERMINAL_COMMAND },
+  connect: { label: 'Conectar ao Claude Code', run: installPlugin, status: pluginStatus, manualCommand: TERMINAL_COMMAND },
   toSignal: (body) => {
     const input = parseHookInput(body);
     return input && hookToSignal(input);

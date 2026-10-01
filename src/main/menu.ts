@@ -1,9 +1,9 @@
 // Menu do app — o mesmo no botão direito da Tera e no ícone da bandeja.
-import { app, clipboard, Menu, type MenuItemConstructorOptions } from 'electron';
+import { app, Menu, type MenuItemConstructorOptions } from 'electron';
 import { APP_NAME, CHARACTER_NAME } from '../shared/brand';
 import { SVG_SKIN_ID } from '../shared/skin';
+import { connectAgent } from './connect-flow';
 import { ADAPTERS } from './integrations';
-import type { AgentAdapter } from './integrations/types';
 import type { Entity } from './entity';
 import { MAX_ENTITIES, type EntityManager } from './manager';
 import { listSkins, loadSkin } from './skins';
@@ -19,37 +19,6 @@ function skinItems(manager: EntityManager): MenuItemConstructorOptions[] {
 }
 
 const STARTUP_LABEL = process.platform === 'win32' ? 'Abrir com o Windows' : 'Abrir ao iniciar o sistema';
-
-let connecting = false;
-
-/** Roda a conexão oferecida por um adapter e a Tera conta como foi */
-async function connectAgent(manager: EntityManager, adapter: AgentAdapter): Promise<void> {
-  const connector = adapter.connect;
-  if (!connector || connecting) return;
-  connecting = true;
-  manager.setVisible(true);
-  manager.broadcast({ state: 'thinking', say: `Conectando ao ${adapter.displayName}... ⏳` });
-  const result = await connector.run();
-  connecting = false;
-
-  if (result.ok) {
-    manager.broadcast({
-      state: 'happy',
-      duration: 8000,
-      say: 'Pronto, conectei! Sessões que já estavam abertas precisam ser reiniciadas 😊',
-    });
-    return;
-  }
-  clipboard.writeText(connector.manualCommand);
-  if (result.reason === 'failed') console.error(`[terracota] falha ao conectar ${adapter.id}:\n`, result.output);
-  manager.broadcast({
-    state: result.reason === 'not-found' ? 'attention' : 'error',
-    duration: 9000,
-    say: result.reason === 'not-found'
-      ? `Não achei o ${adapter.displayName} aqui 🤔 Copiei um comando: cola num terminal e aperta Enter!`
-      : 'Algo deu errado 😣 Copiei o comando: cola num terminal pra ver o que houve.',
-  });
-}
 
 function connectItems(manager: EntityManager): MenuItemConstructorOptions[] {
   return ADAPTERS.filter((a) => a.connect).map((a) => ({

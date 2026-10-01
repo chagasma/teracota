@@ -2,7 +2,7 @@
 // - single: uma Tera só; agrega o estado de todas as sessões
 // - multi:  uma Tera por sessão; a primeira ("de casa") nunca vai embora
 import type { WebContents } from 'electron';
-import { screen } from 'electron';
+import { app, screen } from 'electron';
 import { CHARACTER_NAME, ENTITY_COLORS } from '../shared/brand';
 import type { EntityMode, Identity, MoveMode, Point } from '../shared/ipc';
 import type { CompanionEvent, IncomingEvent } from '../shared/protocol';
@@ -46,12 +46,24 @@ export class EntityManager {
     this.spawnHome();
     if (!this.config.onboarded) {
       this.updateConfig({ onboarded: true });
+      // primeira vez: já abre junto com o sistema (dá pra desligar no menu).
+      // Só no app instalado — em dev registraria o Electron cru. Linux não suporta.
+      if (app.isPackaged && process.platform !== 'linux') app.setLoginItemSettings({ openAtLogin: true });
       setTimeout(() => this.entities[0]?.send({
         state: 'attention',
-        duration: 6000,
-        say: `Oi! Eu sou a ${CHARACTER_NAME} 👋 Me conecta ao Claude Code pelo menu (botão direito em mim)!`,
+        duration: 5000,
+        say: `Oi! Eu sou a ${CHARACTER_NAME} 👋 Vou te fazer companhia enquanto você programa!`,
       }), 1500);
     }
+  }
+
+  /** A oferta de conectar a um agente já foi feita (ou não é mais necessária) */
+  get connectOffered(): boolean {
+    return this.config.connectOffered === true;
+  }
+
+  markConnectOffered(): void {
+    if (!this.connectOffered) this.updateConfig({ connectOffered: true });
   }
 
   setVisible(visible: boolean): void {

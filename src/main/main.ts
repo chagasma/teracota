@@ -8,6 +8,7 @@ import { loadConfig } from './config';
 import type { Entity } from './entity';
 import { EntityManager } from './manager';
 import { buildMenu } from './menu';
+import { offerConnection, onTeraClicked } from './connect-flow';
 import { assetsDir } from './paths';
 import { startEventServer } from './server';
 import { loadSkin } from './skins';
@@ -28,6 +29,7 @@ onEntity<[number, number]>(IPC.moveBy, (entity, dx, dy) => entity.moveBy(dx, dy)
 onEntity(IPC.dragEnd, (entity) => entity.settle());
 onEntity<[boolean]>(IPC.walkAllowed, (entity, allowed) => entity.setWalkAllowed(allowed));
 onEntity(IPC.contextMenu, (entity) => buildMenu(manager, entity).popup({ window: entity.win }));
+onEntity(IPC.clicked, () => onTeraClicked(manager));
 ipcMain.handle(IPC.getSkin, () => loadSkin(manager?.skinId));
 
 function createTray(): void {
@@ -57,6 +59,8 @@ if (!app.requestSingleInstanceLock()) {
     app.dock?.hide(); // macOS: vive na barra de menus, sem ícone no Dock
     manager = new EntityManager(loadConfig());
     manager.start();
+    // depois da saudação: se achar um agente instalado e não conectado, oferece conectar
+    setTimeout(() => void offerConnection(manager), 5000);
     createTray();
     startEventServer(getPort(), {
       onSignal: (signal) => manager.handleSignal(signal),

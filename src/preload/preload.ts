@@ -14,6 +14,7 @@ const api: CompanionApi = {
   moveBy: (dx, dy) => ipcRenderer.send(IPC.moveBy, dx, dy),
   dragEnd: () => ipcRenderer.send(IPC.dragEnd),
   setWalkAllowed: (allowed) => ipcRenderer.send(IPC.walkAllowed, allowed),
+  notifyClick: () => ipcRenderer.send(IPC.clicked),
 };
 
 contextBridge.exposeInMainWorld('terracota', api);

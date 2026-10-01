@@ -15,6 +15,7 @@ export const IPC = {
   dragEnd: 'terracota:drag-end',
   walkAllowed: 'terracota:walk-allowed',
   getSkin: 'terracota:get-skin',
+  clicked: 'terracota:clicked',
 } as const;
 
 /** roam = passeia pela tela; stay = fica parado onde foi deixado */
@@ -62,6 +63,8 @@ export interface CompanionApi {
   moveBy(dx: number, dy: number): void;
   dragEnd(): void;
   setWalkAllowed(allowed: boolean): void;
+  /** Clicaram na Tera (o main usa pra aceitar ofertas, ex.: conectar a um agente) */
+  notifyClick(): void;
 }
 
 declare global {
